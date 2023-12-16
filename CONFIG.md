@@ -15,7 +15,7 @@ F1JP
 
 > This is the description of the feed.
 
-F1jp
+F1jpが含まれる投稿を拾います。
 
 # searchTerms
 
@@ -48,4 +48,4 @@ true
 
 > This must link to an image (PNG or JPEG) in the same directory as this CONFIG.md. It doesn't have to be called `avatar.png`, but just be sure this CONFIG.md points to the correct file.
 
-![](avatar.png)
+![](formula-1-logo.svg)
