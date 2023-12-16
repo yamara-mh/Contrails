@@ -9,13 +9,13 @@ test
 
 > This is the title of the custom feed. Maximum length is 24 characters.
 
-test
+F1JP
 
 # description
 
 > This is the description of the feed.
 
-test
+F1jp
 
 # searchTerms
 
@@ -25,7 +25,9 @@ test
 > - Users: links such as `https://bsky.app/profile/why.bsky.team` will pull in the user's posts. To include replies and reposts, you can add the following flags: `https://bsky.app/profile/why.bsky.team +replies +reposts`.
 > - Pinned posts: links such as `https://bsky.app/profile/saddymayo.bsky.social/post/3jxju2wwap22e` will pin at the top of the feed. One link per line, please.
 
-- 玉藻
+- F1jp
+- f1jp
+- F1JP
 
 # denyList
 
