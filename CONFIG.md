@@ -48,4 +48,4 @@ true
 
 > This must link to an image (PNG or JPEG) in the same directory as this CONFIG.md. It doesn't have to be called `avatar.png`, but just be sure this CONFIG.md points to the correct file.
 
-![](formula-1-logo.svg)
+![](formula-1-logo.png)
