@@ -33,9 +33,8 @@ export async function fetchGuarded() {
 
 
 
-export async function fetchGuarded2(urls, session) {
+export async function fetchGuardedWithLogin(urls, session) {
   console.log(urls);
-  console.log(session);
   if (getSafeMode() === false) {
     fetchCount++;
     console.log(`fetch ${fetchCount}`);

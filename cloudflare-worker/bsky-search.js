@@ -1,4 +1,4 @@
-import { fetchGuarded2 } from "./bsky-fetch-guarded";
+import { fetchGuardedWithLogin } from "./bsky-fetch-guarded";
 
 export async function searchPost(searchTerm, params,session) {
   let urlParams = {
@@ -12,7 +12,7 @@ export async function searchPost(searchTerm, params,session) {
   }
   let url =
     "https://bsky.social/xrpc/app.bsky.feed.searchPosts?" + new URLSearchParams(urlParams);
-  let response = await fetchGuarded2(url,session);
+  let response = await fetchGuardedWithLogin(url,session);
   if (response !== null) {
     return await response.json();
   } else {
