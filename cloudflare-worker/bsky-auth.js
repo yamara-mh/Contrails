@@ -17,9 +17,10 @@ async function login(username, password) {
       "content-type": "application/json;charset=UTF-8",
     },
   };
-  let response = await fetch(url, init);
+  let response = await fetchGuarded(url, init);
   if (response !== null) {
     let session = await response.json();
+    console.log(session);
     if (session["error"] === undefined) {
       return session;
     }
