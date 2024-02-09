@@ -141,9 +141,7 @@ function fromSearch(query, queryIdx, response, searchParams) {
         }
       }
       let did = searchResult.user.did;
-      let rkey = searchResult.tid.split("/").slice(-1)[0];
-      let timestamp = searchResult.post.createdAt;
-      let atURL = `at://${did}/app.bsky.feed.post/${rkey}`;
+      let atURL = searchResult.uri;
       docs.push({
         type: "search",
         queryIdx: queryIdx,
@@ -295,9 +293,13 @@ export async function getFeedSkeleton(request, env) {
 
   let allQueries = buildQueries(config.searchTerms, cursorParam);
   let session = null;
-  if (allQueries.find((query) => query.type === "user") !== undefined) {
-    session = await loginWithEnv(env);
-  }
+ // if (allQueries.find((query) => query.type === "user") !== undefined) {
+ //   console.log('nbiohgyuy')
+ //   session = await loginWithEnv(env);
+ // }
+
+
+  session = await loginWithEnv(env);
 
   const numQueries = allQueries.length;
   let origCursor = loadCursor(cursorParam);
@@ -322,9 +324,9 @@ export async function getFeedSkeleton(request, env) {
         offset: offset,
         count: 30,
       };
-      let response = await searchPost(query.value, searchParams);
+      let response = await searchPost(query.value, searchParams, session);
       if (response !== null) {
-        items.push(...fromSearch(query, queryIdx, response, searchParams));
+        items.push(...fromSearch(query, queryIdx, response.posts, searchParams));
       }
     } else if (query.type === "user") {
       let cursor = objSafeGet(queryCursor, "cursor", null);

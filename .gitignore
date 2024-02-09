@@ -1,1 +1,6 @@
 node_modules/
+cloudflare-worker/.wrangler
+cloudflare-worker/.dev.vars
+cloudflare-worker/configs.js
+feed-generator/configs.json
+.DS_Store

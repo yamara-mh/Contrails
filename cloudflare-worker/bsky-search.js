@@ -1,6 +1,6 @@
-import { fetchGuarded } from "./bsky-fetch-guarded";
+import { fetchGuarded2 } from "./bsky-fetch-guarded";
 
-export async function searchPost(searchTerm, params) {
+export async function searchPost(searchTerm, params,session) {
   let urlParams = {
     q: searchTerm,
   };
@@ -10,11 +10,12 @@ export async function searchPost(searchTerm, params) {
   if (params.offset !== undefined) {
     urlParams.offset = params.offset;
   }
+  console.log('koko');
   let url =
-    "https://search.bsky.social/search/posts?" + new URLSearchParams(urlParams);
-  let response = await fetchGuarded(url);
+    "https://bsky.social/xrpc/app.bsky.feed.searchPosts?" + new URLSearchParams(urlParams);
+  let response = await fetchGuarded2(url,session);
   if (response !== null) {
-    return response.json();
+    return await response.json();
   } else {
     return null;
   }
