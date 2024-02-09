@@ -10,7 +10,6 @@ export async function searchPost(searchTerm, params,session) {
   if (params.offset !== undefined) {
     urlParams.offset = params.offset;
   }
-  console.log('koko');
   let url =
     "https://bsky.social/xrpc/app.bsky.feed.searchPosts?" + new URLSearchParams(urlParams);
   let response = await fetchGuarded2(url,session);

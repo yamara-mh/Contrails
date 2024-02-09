@@ -126,6 +126,7 @@ function fromSearch(query, queryIdx, response, searchParams) {
   if (Array.isArray(response)) {
     for (let itemIdx = 0; itemIdx < response.length; itemIdx++) {
       let searchResult = response[itemIdx];
+      console.log(searchResult);
       if (normalizedQuotedPhrases.length > 0) {
         // perform a case-insensitive search for all quoted phrases
         let matches = true;
@@ -140,13 +141,11 @@ function fromSearch(query, queryIdx, response, searchParams) {
           continue;
         }
       }
-      let did = searchResult.user.did;
-      let atURL = searchResult.uri;
       docs.push({
         type: "search",
         queryIdx: queryIdx,
-        timestamp: timestamp,
-        atURL: atURL,
+        timestamp: searchResult.record.createdAt,
+        atURL: searchResult.uri,
         itemIdx: itemIdx,
         total: response.length,
         count: searchParams.count,
