@@ -5,10 +5,10 @@ export async function searchPost(searchTerm, params,session) {
     q: searchTerm,
   };
   if (params.count !== undefined) {
-    urlParams.count = params.count;
+    urlParams.limit = params.count;
   }
   if (params.offset !== undefined) {
-    urlParams.offset = params.offset;
+    urlParams.cursor = params.offset;
   }
   let url =
     "https://bsky.social/xrpc/app.bsky.feed.searchPosts?" + new URLSearchParams(urlParams);
