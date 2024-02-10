@@ -3,5 +3,5 @@ compatibility_date = "2024-01-29"
 [[ d1_databases ]]
 binding = "DB" # i.e. available in your Worker on env.DB
 preview_database_id = "DB"
-database_name = "${DATABASE_NAME}"
-database_id = "${DATABASE_ID}"
+database_name = "auth"
+database_id = "727e5418-48e5-4adb-aaf8-707b5b8daede"
