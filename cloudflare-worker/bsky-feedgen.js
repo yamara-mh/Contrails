@@ -126,6 +126,7 @@ function fromSearch(query, queryIdx, response, searchParams) {
   if (Array.isArray(response)) {
     for (let itemIdx = 0; itemIdx < response.length; itemIdx++) {
       let searchResult = response[itemIdx];
+      console.log(searchResult);
       if (normalizedQuotedPhrases.length > 0) {
         // perform a case-insensitive search for all quoted phrases
         let matches = true;
@@ -140,10 +141,12 @@ function fromSearch(query, queryIdx, response, searchParams) {
           continue;
         }
       }
+      let timestampStr = searchResult.record.createdA;
+      let timestamp = new Date(timestampStr).valueOf() * 1000000;
       docs.push({
         type: "search",
         queryIdx: queryIdx,
-        timestamp: searchResult.record.createdAt,
+        timestamp: timestamp,
         atURL: searchResult.uri,
         itemIdx: itemIdx,
         total: response.length,
@@ -290,14 +293,9 @@ export async function getFeedSkeleton(request, env) {
   }
 
   let allQueries = buildQueries(config.searchTerms, cursorParam);
-  let session = null;
- // if (allQueries.find((query) => query.type === "user") !== undefined) {
- //   console.log('nbiohgyuy')
- //   session = await loginWithEnv(env);
- // }
+  let accessJwt = null;
 
-
-  session = await loginWithEnv(env);
+  accessJwt = await loginWithEnv(env);
 
   const numQueries = allQueries.length;
   let origCursor = loadCursor(cursorParam);
@@ -322,13 +320,13 @@ export async function getFeedSkeleton(request, env) {
         offset: offset,
         count: 30,
       };
-      let response = await searchPost(query.value, searchParams, session);
+      let response = await searchPost(query.value, searchParams, accessJwt);
       if (response !== null) {
         items.push(...fromSearch(query, queryIdx, response.posts, searchParams));
       }
     } else if (query.type === "user") {
       let cursor = objSafeGet(queryCursor, "cursor", null);
-      let response = await fetchUser(session, query.value, cursor);
+      let response = await fetchUser(accessJwt, query.value, cursor);
       if (response !== null) {
         items.push(...fromUser(query, queryIdx, response, { cursor: cursor }));
       }
@@ -454,8 +452,8 @@ function buildQueries(allTerms, cursorParam = null) {
   return orderedQueries;
 }
 
-async function fetchUser(session, user, cursor = null) {
-  let response = await appBskyFeedGetAuthorFeed(session, user, cursor);
+async function fetchUser(accessJwt, user, cursor = null) {
+  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, cursor);
   if (response !== null) {
     return await response.json();
   } else {

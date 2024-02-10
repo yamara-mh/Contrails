@@ -33,14 +33,14 @@ export async function fetchGuarded() {
 
 
 
-export async function fetchGuardedWithLogin(urls, session) {
+export async function fetchGuardedWithLogin(urls, accessJwt) {
   console.log(urls);
   if (getSafeMode() === false) {
     fetchCount++;
     console.log(`fetch ${fetchCount}`);
     return await fetch(urls,{
       headers: {
-        Authorization: `Bearer ${session.accessJwt}`,
+        Authorization: `Bearer ${accessJwt}`,
       },
     });
   } else {
@@ -52,7 +52,7 @@ export async function fetchGuardedWithLogin(urls, session) {
       console.log(`fetch ${fetchCount}`);
       return await fetch(urls,{
         headers: {
-          Authorization: `Bearer ${session.accessJwt}`,
+          Authorization: `Bearer ${accessJwt}`,
         },
       });
     }

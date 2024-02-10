@@ -1,20 +1,24 @@
 import { fetchGuardedWithLogin } from "./bsky-fetch-guarded";
 
-export async function searchPost(searchTerm, params,session) {
+export async function searchPost(searchTerm, params,accessJwt) {
   let urlParams = {
     q: searchTerm,
   };
   if (params.count !== undefined) {
+    // @ts-expect-error TS(2339): Property 'limit' does not exist on type '{ q: any;... Remove this comment to see the full error message
     urlParams.limit = params.count;
   }
   if (params.offset !== undefined) {
+    // @ts-expect-error TS(2339): Property 'cursor' does not exist on type '{ q: any... Remove this comment to see the full error message
     urlParams.cursor = params.offset;
   }
   let url =
     "https://bsky.social/xrpc/app.bsky.feed.searchPosts?" + new URLSearchParams(urlParams);
-  let response = await fetchGuardedWithLogin(url,session);
+    console.log(accessJwt);
+  let response = await fetchGuardedWithLogin(url,accessJwt);
   if (response !== null) {
-    return await response.json();
+    let resbody = await response.json();
+    return resbody;
   } else {
     return null;
   }

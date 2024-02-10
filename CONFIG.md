@@ -3,13 +3,13 @@
 
 > This is the feed's ID which can be letters, numbers, or dashes. Spaces are not allowed. Maximum length is 15 characters.
 
-testo
+aaajpwvum4ejo
 
 # displayName
 
 > This is the title of the custom feed. Maximum length is 24 characters.
 
-testtest
+#F1JP
 
 # description
 
