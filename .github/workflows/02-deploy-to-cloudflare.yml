@@ -9,6 +9,7 @@ env:
   BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
   BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_D1_ID: ${{ secrets.CLOUDFLARE_D1_ID }}
   CLOUDFLARE_WORKER_NAME: ${{ vars.CLOUDFLARE_WORKER_NAME }}
   CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
 
@@ -24,8 +25,13 @@ jobs:
       - name: Populate wrangler.toml
         run: |
           >wrangler.toml
-          echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\"" >>wrangler.toml
+          echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\" >>wrangler.toml
           echo compatibility_date = \"2023-05-30\" >>wrangler.toml
+          echo \[\[ d1_databases \]\] >>wrangler.toml
+          echo binding = \"DB\"  >>wrangler.toml
+          echo preview_database_id = \"DB\"  >>wrangler.toml
+          echo database_name = \"auth\"  >>wrangler.toml
+          echo database_id = \"${{ env.CLOUDFLARE_D1_ID }}\"   >>wrangler.toml
       - name: Store Secrets and Deploy
         uses: cloudflare/wrangler-action@2.0.0
         with:
