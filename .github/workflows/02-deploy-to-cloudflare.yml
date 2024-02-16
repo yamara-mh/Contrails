@@ -25,13 +25,13 @@ jobs:
       - name: Populate wrangler.toml
         run: |
           >wrangler.toml
-          echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\" >>wrangler.toml
+          echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\"" >>wrangler.toml
           echo compatibility_date = \"2023-05-30\" >>wrangler.toml
           echo \[\[ d1_databases \]\] >>wrangler.toml
           echo binding = \"DB\"  >>wrangler.toml
           echo preview_database_id = \"DB\"  >>wrangler.toml
           echo database_name = \"auth\"  >>wrangler.toml
-          echo database_id = \"${{ env.CLOUDFLARE_D1_ID }}\"   >>wrangler.toml
+          echo "database_id = \"${{ env.CLOUDFLARE_D1_ID }}\""   >>wrangler.toml
       - name: Store Secrets and Deploy
         uses: cloudflare/wrangler-action@2.0.0
         with:
