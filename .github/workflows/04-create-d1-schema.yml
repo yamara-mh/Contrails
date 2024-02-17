@@ -14,7 +14,7 @@ env:
 jobs:
   deploy_cloudflare_worker:
     runs-on: ubuntu-latest
-    name: Deploy Cloudflare Worker
+    name: Create schema and table
     steps:
       - uses: actions/checkout@v4
       - name: Create D1 Schema
