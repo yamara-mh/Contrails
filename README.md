@@ -29,7 +29,6 @@ The current release is [**0.2.4**](https://github.com/jcsalterego/Contrails/rele
   * Variable: `CLOUDFLARE_WORKER_NAME`
   * Secret: `BLUESKY_APP_PASSWORD`
   * Secret: `CLOUDFLARE_API_TOKEN`
-  * Secret: `CLOUDFLARE_D1_ID`
 6. Edit [CONFIG.md](CONFIG.md) in your fork
 7. Go to **Actions** > **1. Check Requirements**, select **Run Workflow**, refresh and wait for completion
 8. Go to **Actions** > **4. Create D1 Shema**, select **Run Workflow**, refresh and wait for completion
