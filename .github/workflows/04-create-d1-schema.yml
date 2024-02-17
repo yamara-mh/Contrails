@@ -17,9 +17,15 @@ jobs:
     name: Deploy Cloudflare Worker
     steps:
       - uses: actions/checkout@v4
-      - name: Store Secrets and Deploy
+      - name: Create D1 Schema
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           command: |
             d1 create contrails-auth
+      - name: Create auth table
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          command: |
+            d1 execute contrails-auth  --file=./cloudflare-worker/schema.sql
