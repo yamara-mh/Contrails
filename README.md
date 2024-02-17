@@ -29,8 +29,11 @@ The current release is [**0.2.4**](https://github.com/jcsalterego/Contrails/rele
   * Variable: `CLOUDFLARE_WORKER_NAME`
   * Secret: `BLUESKY_APP_PASSWORD`
   * Secret: `CLOUDFLARE_API_TOKEN`
+  * Secret: `CLOUDFLARE_D1_ID` (put dummy value such as 'dummmy')
 6. Edit [CONFIG.md](CONFIG.md) in your fork
 7. Go to **Actions** > **1. Check Requirements**, select **Run Workflow**, refresh and wait for completion
+8. Go to **Actions** > **4. Create D1 Shema**, select **Run Workflow**, refresh and wait for completion
+9. Go to Cloudfare D1 page, check contrails-auth database id (such as 59025902-5902-4b69-ac8e-a277052dummy001) , copy and update GitHub secret variables as `CLOUDFLARE_D1_ID`
 8. Go to **Actions** > **2. Deploy to Cloudflare**, select **Run Workflow**, refresh and wait for completion
 9. Go to **Actions** > **3. Publish Feed Generator**, select **Run Workflow**, refresh and wait for completion
 10. Visit the `BLUESKY_HANDLE` profile, e.g. [https://bsky.app/profile/jcsalterego.bsky.social](https://bsky.app/profile/jcsalterego.bsky.social) and then the Feeds tab
