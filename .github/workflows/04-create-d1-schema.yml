@@ -17,9 +17,6 @@ jobs:
     name: Deploy Cloudflare Worker
     steps:
       - uses: actions/checkout@v4
-      - name: Render Config
-        run: |
-          python render-configs.py
       - name: Store Secrets and Deploy
         uses: cloudflare/wrangler-action@3
         with:
