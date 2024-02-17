@@ -11,6 +11,7 @@ env:
   CLOUDFLARE_WORKER_NAME: ${{ vars.CLOUDFLARE_WORKER_NAME }}
   BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
   BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+  CLOUDFLARE_D1_ID: ${{ secrets.CLOUDFLARE_D1_ID }}
 
 jobs:
   check_cloudflare_api_token:
@@ -77,3 +78,16 @@ jobs:
               echo "Go to this repository's Settings > Secrets and variables > Variables."
               exit 1
           fi
+  check_d1_id:
+    runs-on: ubuntu-latest
+    name: Has Secret CLOUDFLARE_D1_ID
+    steps:
+      - run: |
+          if [ -n "${CLOUDFLARE_D1_ID}" ]; then
+              echo "CLOUDFLARE_D1_ID is set."
+          else
+              echo "The CLOUDFLARE_D1_ID variable needs to be set."
+              echo "Go to this repository's Settings > Secrets and variables > Variables."
+              exit 1
+          fi
+
