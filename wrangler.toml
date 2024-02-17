@@ -1,0 +1,5 @@
+compatibility_date = "2023-05-30"
+[[ d1_databases ]]
+binding = "DB"
+preview_database_id = "DB"
+database_name = "auth"
