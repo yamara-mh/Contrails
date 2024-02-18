@@ -8,7 +8,7 @@ Fork or copy the repository and edit `CONFIG.md` to define your feed generator.
 
 Deploy right from [GitHub Actions](https://github.com/features/actions) to [Cloudflare Workers](https://workers.cloudflare.com).
 
-The current release is [**0.2.4 - fork v.2024.02.18**].
+The current release is [**0.2.4 - fork v.2024.02.18**](https://github.com/usounds/Contrails/releases/tag/v0.2.4-v2024.02.18).
 
 ## Requirements
 
@@ -20,7 +20,7 @@ The current release is [**0.2.4 - fork v.2024.02.18**].
 ## Installation & Configuration: The Short Version
 
 1. Create a Cloudflare Worker
-2. Create a Cloudflare API Token (the Edit Workers template is fine)
+2. Create a Cloudflare API Token (the Edit Workers template is fine. And add permissions for 'Account', 'D1', and 'Edit'.)
 3. Create a Bluesky App Password
 4. Fork this repository
 5. In your fork's **Settings > Secrets and variables > Actions**, set the following:
