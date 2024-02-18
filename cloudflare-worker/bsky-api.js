@@ -1,7 +1,7 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
 
 export async function appBskyFeedGetAuthorFeed(accessJwt, did, cursor = null) {
-  if (session === null) {
+  if (accessJwt === null) {
     return null;
   }
   let params = {
