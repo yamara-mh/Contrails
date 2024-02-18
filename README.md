@@ -49,7 +49,7 @@ In the event you'd like to pull in the latest changes into a fork of Contrails, 
 
 ## Changelog
 
-### 0.2.4 - fork v 2024/02/17
+### 0.2.4 - fork v.2024.02.17
 
 * change search API from search/posts to app.bsky.feed.searchPosts
 
