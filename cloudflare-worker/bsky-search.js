@@ -1,4 +1,4 @@
-import { fetchGuardedWithLogin } from "./bsky-fetch-guarded";
+import { fetchGuarded } from "./bsky-fetch-guarded";
 
 export async function searchPost(searchTerm, params,accessJwt) {
   let urlParams = {
