@@ -1,14 +1,19 @@
 export const CONFIGS = {
-  "aaajpwvum4ejo": {
-    "recordName": "aaajpwvum4ejo",
-    "displayName": "F1jp",
-    "description": "F1jp\u304c\u542b\u307e\u308c\u308b\u6295\u7a3f\u3092\u62fe\u3044\u307e\u3059\u3002",
+  "emotional-suppo": {
+    "recordName": "emotional-suppo",
+    "displayName": "Emotional Support Pets",
+    "description": "Cute animals feed",
     "searchTerms": [
-      "f1jp"
+      "at://did:plc:ozppa2bsq6bdnajyweoir2i2/app.bsky.feed.post/3jxju2wwap22e",
+      "cats",
+      "dogs",
+      "penguins",
+      "red pandas",
+      "quokkas"
     ],
     "denyList": [],
     "safeMode": true,
-    "avatar": "formula-1-logo.png",
+    "avatar": "avatar.png",
     "isEnabled": true
   },
   "bluesky-app": {
