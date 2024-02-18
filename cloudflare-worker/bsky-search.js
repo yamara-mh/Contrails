@@ -15,7 +15,14 @@ export async function searchPost(searchTerm, params,accessJwt) {
   let url =
     "https://bsky.social/xrpc/app.bsky.feed.searchPosts?" + new URLSearchParams(urlParams);
     console.log(accessJwt);
-  let response = await fetchGuardedWithLogin(url,accessJwt);
+  //let response = await fetchGuardedWithLogin(url,accessJwt);
+
+  let response = await fetchGuarded(url, {
+    headers: {
+      Authorization: `Bearer ${accessJwt}`,
+    },
+  })
+
   if (response !== null) {
     let resbody = await response.json();
     return resbody;
