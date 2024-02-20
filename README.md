@@ -10,6 +10,9 @@ Deploy right from [GitHub Actions](https://github.com/features/actions) to [Clou
 
 The current release is [**0.2.4 - fork v.2024.02.21**](https://github.com/usounds/Contrails/releases/latest).
 
+Please refer to the following URL for the Japanese instructions:
+https://blog.usounds.work/posts/contrails-fork-manual/
+
 ## Requirements
 
 - Bluesky Social account
