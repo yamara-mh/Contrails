@@ -6,22 +6,28 @@ const run = async () => {
   let config = require("./config.json");
   const handle = `${process.env.BLUESKY_HANDLE}`
   const password = `${process.env.BLUESKY_APP_PASSWORD}`
-  const recordName = `${process.env.RECORD_NAME}`
+  const recordName = `${process.env.RECORD_NAME}` || ''
 
   // only update this if in a test environment
   const agent = new AtpAgent({ service: 'https://bsky.social' })
   await agent.login({ identifier: handle, password })
 
+  const did = agent.session?.did ?? ''
+
+  const checkRecord = {
+    feed:'at://' + did + '/app.bsky.feed.generator/' + recordName
+  }
+
   try {
-    await agent.api.app.bsky.feed.describeFeedGenerator()
+    await agent.api.app.bsky.feed.getFeedGenerator(checkRecord)
   } catch (err) {
     throw new Error(
-      'The bluesky server is not ready to accept published custom feeds yet',
+      'The specified feed is not registered.',
     )
   }
 
   let record = {
-    repo: agent.session?.did ?? '',
+    repo: did,
     collection: 'app.bsky.feed.generator',
     rkey: recordName,
   }

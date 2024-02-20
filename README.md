@@ -8,7 +8,7 @@ Fork or copy the repository and edit `CONFIG.md` to define your feed generator.
 
 Deploy right from [GitHub Actions](https://github.com/features/actions) to [Cloudflare Workers](https://workers.cloudflare.com).
 
-The current release is [**0.2.4 - fork v.2024.02.18**](https://github.com/usounds/Contrails/releases/tag/v0.2.4-v2024.02.18).
+The current release is [**0.2.4 - fork v.2024.02.21**](https://github.com/usounds/Contrails/releases/latest).
 
 ## Requirements
 
@@ -48,6 +48,10 @@ In the event you'd like to pull in the latest changes into a fork of Contrails, 
 [GitHub Docs: Syncing a fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
 
 ## Changelog
+
+### 0.2.4 - fork v.2024.02.21
+
+* Fixed issue causing failure during execution of delete-feed-generator.
 
 ### 0.2.4 - fork v.2024.02.18
 
