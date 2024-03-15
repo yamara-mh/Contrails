@@ -6,7 +6,13 @@ const run = async () => {
   let config = require("./config.json");
   const handle = `${process.env.BLUESKY_HANDLE}`
   const password = `${process.env.BLUESKY_APP_PASSWORD}`
-  const recordName = `${process.env.RECORD_NAME}` || ''
+  let recordName = `${process.env.RECORD_NAME}` || ''
+
+  recordName = recordName.toLowerCase()
+
+  if (recordName.length > 15) {
+    recordName = recordName.substring(0, 15);
+  }
 
   // only update this if in a test environment
   const agent = new AtpAgent({ service: 'https://bsky.social' })
