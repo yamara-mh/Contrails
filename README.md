@@ -49,6 +49,11 @@ In the event you'd like to pull in the latest changes into a fork of Contrails, 
 
 ## Changelog
 
+### 0.2.4 - fork v.2024.03.15
+
+* Improve UTF-8 compatibility
+* Modify deleteFeedGenerator to truncate Recordname to 15 characters and convert it to lowercase.
+
 ### 0.2.4 - fork v.2024.02.21
 
 * Fixed issue causing failure during execution of delete-feed-generator.
