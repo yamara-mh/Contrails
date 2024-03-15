@@ -1,3 +1,4 @@
+# coding: utf-8
 #!/usr/bin/env python3
 import glob
 import json
@@ -176,18 +177,18 @@ def parse_config(dirname, markdown_contents):
 
 
 def save_json_configs(json_path, configs):
-    with open(json_path, "w") as f:
-        json.dump(configs, f, indent=2)
+    with open(json_path, "w", encoding='utf-8') as f:
+        json.dump(configs, f, indent=2, ensure_ascii=False)
 
 
 def replace_json_configs(configs_js_path, configs):
     new_contents = "".join(
         [
-            "export const CONFIGS = " + json.dumps(configs, indent=2),
+            "export const CONFIGS = " + json.dumps(configs, indent=2, ensure_ascii=False),
             "\n",
         ]
     )
-    with open(configs_js_path, "w") as f:
+    with open(configs_js_path, "w", encoding='utf-8') as f:
         f.write(new_contents)
 
 
@@ -196,7 +197,7 @@ def main():
     paths = ["CONFIG.md"] + glob.glob("configs/*.md")
     for path in paths:
         if os.path.exists(path):
-            with open(path, "r") as f:
+            with open(path, "r", encoding='utf-8') as f:
                 config = parse_config(os.path.dirname(path), f.read())
                 configs[config["recordName"]] = config
 
