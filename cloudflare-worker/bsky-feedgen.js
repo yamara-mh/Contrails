@@ -126,11 +126,12 @@ function fromSearch(query, queryIdx, response, searchParams) {
   if (Array.isArray(response)) {
     for (let itemIdx = 0; itemIdx < response.length; itemIdx++) {
       let searchResult = response[itemIdx];
-      console.log(searchResult);
       if (normalizedQuotedPhrases.length > 0) {
         // perform a case-insensitive search for all quoted phrases
         let matches = true;
-        let normalizedPostText = searchResult.post.text.toLowerCase();
+        let normalizedPostText = searchResult.record.text
+        if(normalizedPostText === undefined) searchResult.post.text
+        normalizedPostText = normalizedPostText.toLowerCase();
         for (let phrase of normalizedQuotedPhrases) {
           if (!normalizedPostText.includes(phrase)) {
             matches = false;
