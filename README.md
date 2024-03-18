@@ -52,6 +52,10 @@ In the event you'd like to pull in the latest changes into a fork of Contrails, 
 
 ## Changelog
 
+### 0.2.4 - fork v.2024.03.18
+
+* fixed the issue causing errors when using 'exact match'.
+
 ### 0.2.4 - fork v.2024.03.15
 
 * Improve UTF-8 compatibility
