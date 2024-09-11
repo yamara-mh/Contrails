@@ -1,4 +1,6 @@
-
+# Important Notice
+This fork has discontinued updates as of version 0.2.4 - fork v.2024.03.18.
+ 
 # Contrails
 
 Contrails is an [ATProto Feed Generator](https://github.com/bluesky-social/feed-generator) backed by
@@ -8,7 +10,7 @@ Fork or copy the repository and edit `CONFIG.md` to define your feed generator.
 
 Deploy right from [GitHub Actions](https://github.com/features/actions) to [Cloudflare Workers](https://workers.cloudflare.com).
 
-The current release is [**0.2.4 - fork v.2024.02.21**](https://github.com/usounds/Contrails/releases/latest).
+The current release is [**0.2.4 - fork v.2024.03.18**](https://github.com/usounds/Contrails/releases/latest).
 
 Please refer to the following URL for the Japanese instructions:
 https://blog.usounds.work/posts/contrails-fork-manual/
