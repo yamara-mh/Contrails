@@ -12,5 +12,6 @@ jobs:
         with:
           node-version: "20"
           cache: npm
+          cache-dependency-path: feed-generator/yarn.lock
 
       - run: node --version
