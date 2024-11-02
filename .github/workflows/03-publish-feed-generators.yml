@@ -29,11 +29,11 @@ jobs:
               | jq -r '.result.subdomain' > $tmp
           export CLOUDFLARE_WORKERS_SUBDOMAIN="$(cat $tmp)"
           echo "FEEDGEN_HOSTNAME=${CLOUDFLARE_WORKER_NAME}.${CLOUDFLARE_WORKERS_SUBDOMAIN}.workers.dev" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Render Config
         run: |
           python render-configs.py
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
       - name: Publish Feed Generators
         run: |
           cd feed-generator/
