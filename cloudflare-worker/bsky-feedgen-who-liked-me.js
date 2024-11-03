@@ -280,11 +280,6 @@ export async function getFeedSkeleton(request, env) {
     console.warn(`Feed ID ${feedId} has no safeMode`);
     config.safeMode = true;
   }
-  if (config.denyList === undefined) {
-    config.denyList = new Set();
-  } else {
-    config.denyList = new Set(config.denyList);
-  }
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(config.safeMode);
 
@@ -306,6 +301,13 @@ export async function getFeedSkeleton(request, env) {
     console.warn("Dropping cursor because it has the wrong number of queries");
     origCursor = null;
   }
+
+
+  const did = new DidResolver({}).did;
+  if (did == undefined) throw new Error('expected handle to resolve');
+  else console.log(did);
+  
+  
 
   let items = [];
   for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
