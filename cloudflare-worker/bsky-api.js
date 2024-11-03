@@ -11,7 +11,7 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, cursor = null) {
   if (cursor !== undefined && cursor !== null) {
     params.cursor = cursor;
   }
-  const url = "https://bsky.app/search?q=did%3Aplc%3" + did;
+  const url = "https://bsky.app/search?q=bsky.app" //did%3Aplc%3" + did;
   // const url = 
   //   "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
   //   new URLSearchParams(params);
