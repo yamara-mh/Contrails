@@ -303,9 +303,9 @@ export async function getFeedSkeleton(request, env) {
   }
 
 
-  const did = new DidResolver({}).did;
-  if (did == undefined) throw new Error('expected handle to resolve');
-  else console.log(did);
+  // const did = new DidResolver({}).did;
+  // if (did == undefined) throw new Error('expected handle to resolve');
+  // else console.log(did);
   
   
 
