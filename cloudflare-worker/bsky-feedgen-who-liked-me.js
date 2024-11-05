@@ -4,6 +4,7 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
+import { DidResolver } from '@atproto/identity';
 
 // let's be nice
 const DEFAULT_LIMIT = 40;
@@ -306,6 +307,8 @@ export async function getFeedSkeleton(request, env) {
   // const did = new DidResolver({}).did;
   // if (did == undefined) throw new Error('expected handle to resolve');
   // else console.log(did);
+  const did = new DidResolver().did;
+  console.log(did);
   
   
 
