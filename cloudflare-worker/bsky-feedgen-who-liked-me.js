@@ -4,7 +4,7 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
-import { DidResolver } from '@atproto/identity';
+import { DidResolver } from "./atproto/identity";
 
 // let's be nice
 const DEFAULT_LIMIT = 40;
