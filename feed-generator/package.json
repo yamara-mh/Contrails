@@ -18,7 +18,7 @@
     "@atproto/repo": "^0.1.0",
     "@atproto/uri": "^0.0.2",
     "@atproto/xrpc-server": "^0.2.0",
-    "@atproto/identity" : "^0.0.0",
+    "@atproto/identity": "^0.2.1",
     "dotenv": "^16.0.3",
     "kysely": "^0.22.0",
     "multiformats": "^9.9.0"
