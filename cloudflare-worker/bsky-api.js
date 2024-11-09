@@ -14,8 +14,8 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, cursor = null) {
   const url = 
     "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
     new URLSearchParams(params);
-  console.log("bsky-api did {did}");
-  console.log("bsky-api accessJwt {accessJwt}");
+  // console.log("bsky-api did {did}");
+  // console.log("bsky-api accessJwt {accessJwt}");
   return await fetchGuarded(url, {
     headers: {
       Authorization: `Bearer ${accessJwt}`,
