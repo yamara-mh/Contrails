@@ -9,14 +9,21 @@ async function login(username, password, env) {
     "SELECT * FROM accessJwt WHERE id = 1"
   ).all();
 
-  console.log(results[0].accessJwt);
-
   const savedJwt = results[0].accessJwt;
   const sessionCheck = 'https://bsky.social/xrpc/com.atproto.server.getSession';
   let checkResult = await fetch(sessionCheck,{
     headers: {
       Authorization: `Bearer ${savedJwt}`,
     }})
+
+
+  
+  console.log("login");
+  console.log(checkResult.handle);
+  console.log(checkResult.did);
+  console.log(savedJwt);
+  
+  
 
   if(checkResult.status === 200){
     console.log('valid session.');
