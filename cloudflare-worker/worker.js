@@ -5,8 +5,7 @@ export default {
     console.clear();
     console.log("worker");
     console.log(env);
-    console.log(JSON.stringify(request));
-    console.log(JSON.stringify(ctx));
+    console.log(request.headers.authorization);
     // lame-o routing
     if (request.url.endsWith("/.well-known/did.json")) {
       return await feedGeneratorWellKnown(request);
