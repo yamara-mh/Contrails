@@ -32,8 +32,8 @@ jobs:
           echo preview_database_id = \"DB\"  >>wrangler.toml
           echo database_name = \"contrails-auth\"  >>wrangler.toml
           echo "database_id = \"${{ env.CLOUDFLARE_D1_ID }}\""   >>wrangler.toml
-          echo　"\[observability\]" >>wrangler.toml
-          echo　enabled = "true" >>wrangler.toml
+          echo　"[observability]" >>wrangler.toml
+          echo　"enabled = true" >>wrangler.toml
       - name: Store Secrets and Deploy
         uses: cloudflare/wrangler-action@v3
         with:
