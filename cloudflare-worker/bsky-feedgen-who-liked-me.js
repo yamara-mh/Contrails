@@ -309,6 +309,7 @@ export async function getFeedSkeleton(request, env) {
 
 
 
+
   
   // const did = new DidResolver({}).did;
   // if (did == undefined) throw new Error('expected handle to resolve');
@@ -320,11 +321,11 @@ export async function getFeedSkeleton(request, env) {
 
 
 
-  
+
+
+
 
   
-  
-
   let items = [];
   for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
     let query = allQueries[queryIdx];
