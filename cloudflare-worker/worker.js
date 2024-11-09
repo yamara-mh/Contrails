@@ -4,9 +4,9 @@ export default {
   async fetch(request, env, ctx) {
     console.clear();
     console.log("worker");
-    console.log('%o', request);
     console.log(env);
-    console.log('%o', ctx);
+    console.log(JSON.stringify(request));
+    console.log(JSON.stringify(ctx));
     // lame-o routing
     if (request.url.endsWith("/.well-known/did.json")) {
       return await feedGeneratorWellKnown(request);
