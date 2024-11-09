@@ -13,13 +13,6 @@ async function login(username, password, env) {
 
   const savedJwt = results[0].accessJwt;
   const sessionCheck = 'https://bsky.social/xrpc/com.atproto.server.getSession';
-
-  console.log("bsky-auth username");
-  console.log(...username);
-  console.log("bsky-auth env");
-  console.log(env);
-  console.log("bsky-auth savedJwt");
-  console.log(...savedJwt);
   let checkResult = await fetch(sessionCheck,{
     headers: {
       Authorization: `Bearer ${savedJwt}`,
