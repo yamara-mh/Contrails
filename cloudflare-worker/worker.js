@@ -3,6 +3,10 @@ import { feedGeneratorWellKnown, getFeedSkeleton } from "./bsky-feedgen-who-like
 export default {
   async fetch(request, env, ctx) {
     console.clear();
+    console.log("worker");
+    console.log(request);
+    console.log(env);
+    console.log(ctx);
     // lame-o routing
     if (request.url.endsWith("/.well-known/did.json")) {
       return await feedGeneratorWellKnown(request);
