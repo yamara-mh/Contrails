@@ -11,9 +11,6 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, curso
   if (cursor !== undefined && cursor !== null) {
     params.cursor = cursor;
   }
-  console.log("accessJwt");
-  console.log(accessJwt);
-  console.log(accessJwt === undefined);
   
   const url = 
     "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
