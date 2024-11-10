@@ -247,38 +247,7 @@ function objSafeGet(doc, field, defaultValue) {
   return value;
 }
 
-export async function getFeedSkeleton(request, env) {
-  console.log("getFeedSkeleton");
-  const myAccessjwt = request.headers.get("Authorization");
-  const payloadStr = myAccessjwt.toString().split(" ")[1].split(".")[1];
-  const payload = JSON.parse(atob(payloadStr));
-  console.log(payload.iss);
-  
-  const envAccessJwt = await loginWithEnv(env);
-  const response = await appBskyFeedGetAuthorFeed(envAccessJwt, payload.iss);
-  let myFeed = response.feed;
-  
-  if (Array.isArray(myFeed)) {
-    // filter out replies and reposts
-    let filteredFeed = [];
-    for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
-      const feedItem = myFeed[itemIdx];
-      if (feedItem.post !== undefined && feedItem.post.record !== undefined) {
-        if (feedItem.reply !== undefined && query.includeReplies !== true) continue;
-        if (feedItem.reason !== undefined && query.includeReposts !== true) continue;
-        filteredFeed.push(feedItem);
-      }
-    }
-    feed = filteredFeed;
-  }
-
-  console.log(JSON.parse(feed));
-
-
-
-
-
-  
+export async function getFeedSkeleton(request, env) {  
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
   if (feedAtUrl === null) {
@@ -332,6 +301,49 @@ export async function getFeedSkeleton(request, env) {
     console.warn("Dropping cursor because it has the wrong number of queries");
     origCursor = null;
   }
+
+
+
+
+
+
+
+
+
+  
+  console.log("getFeedSkeleton");
+  const myAccessjwt = request.headers.get("Authorization");
+  const payloadStr = myAccessjwt.toString().split(" ")[1].split(".")[1];
+  const payload = JSON.parse(atob(payloadStr));
+  console.log(payload.iss);
+  
+  const response = await appBskyFeedGetAuthorFeed(accessJwt, payload.iss);
+  let myFeed = response.feed;
+  
+  if (Array.isArray(myFeed)) {
+    // filter out replies and reposts
+    let filteredFeed = [];
+    for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
+      const feedItem = myFeed[itemIdx];
+      if (feedItem.post !== undefined && feedItem.post.record !== undefined) {
+        if (feedItem.reply !== undefined && query.includeReplies !== true) continue;
+        if (feedItem.reason !== undefined && query.includeReposts !== true) continue;
+        filteredFeed.push(feedItem);
+      }
+    }
+    feed = filteredFeed;
+  }
+
+  console.log(JSON.parse(feed));
+
+
+
+
+
+
+
+
+
   
   let items = [];
   for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
