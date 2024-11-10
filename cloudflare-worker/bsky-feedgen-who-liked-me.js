@@ -248,26 +248,31 @@ function objSafeGet(doc, field, defaultValue) {
 }
 
 export async function getFeedSkeleton(request, env) {
-
-
-
-
-
-
-
-
+  console.log("getFeedSkeleton");
+  const myAccessjwt = request.headers.get("Authorization");
+  const payloadStr = myAccessjwt.toString().split(" ")[1].split(".")[1];
+  const payload = JSON.parse(atob(payloadStr));
+  console.log(payload.iss);
   
-  console.log("jwt");
-  const jwt = request.headers.get("Authorization");
-  console.log(jwt);
-  const a = jwt.toString().split(" ")[1].split(".")[1];
-  console.log(a);
-  var userDid = JSON.parse(atob(a));
-  console.log(userDid);
-  console.log(userDid.toString());
-  console.log(userDid.iss);
+  const envAccessJwt = await loginWithEnv(env);
+  const response = await appBskyFeedGetAuthorFeed(envAccessJwt, payload.iss);
+  let myFeed = response.feed;
   
+  if (Array.isArray(myFeed)) {
+    // filter out replies and reposts
+    let filteredFeed = [];
+    for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
+      const feedItem = myFeed[itemIdx];
+      if (feedItem.post !== undefined && feedItem.post.record !== undefined) {
+        if (feedItem.reply !== undefined && query.includeReplies !== true) continue;
+        if (feedItem.reason !== undefined && query.includeReposts !== true) continue;
+        filteredFeed.push(feedItem);
+      }
+    }
+    feed = filteredFeed;
+  }
 
+  console.log(JSON.parse(feed));
 
 
 
