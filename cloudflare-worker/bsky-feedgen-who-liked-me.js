@@ -313,12 +313,12 @@ export async function getFeedSkeleton(request, env) {
   
   console.log("getFeedSkeleton");
   const myAccessJwt = request.headers.get("Authorization");
-  const myAccessJwtStr = myAccessJwt.toString().split(" ")[1].split(".")[1];
-  const payloadStr = myAccessJwt.toString().split(" ")[1].split(".")[1];
+  const myAccessJwtStr = myAccessJwt.toString().split(" ")[1];
+  const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
   console.log(payload.iss);
   
-  const responseMyPosts = await appBskyFeedGetAuthorFeed(myAccessJwt, payload.iss);
+  let responseMyPosts = await appBskyFeedGetAuthorFeed(myAccessJwt, payload.iss);
   let myFeed = responseMyPosts.feed;
   
   if (Array.isArray(myFeed)) {
