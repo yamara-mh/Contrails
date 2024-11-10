@@ -248,6 +248,27 @@ function objSafeGet(doc, field, defaultValue) {
 }
 
 export async function getFeedSkeleton(request, env) {
+
+
+
+
+
+
+
+
+
+  const jwt = request.headers.get("Authorization");
+  const payload = atob(jwt);
+  console.log(jwt);
+  console.log(payload);
+  console.log(payload.iss);
+
+
+
+
+
+
+  
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
   if (feedAtUrl === null) {
