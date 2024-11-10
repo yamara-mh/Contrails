@@ -7,9 +7,9 @@ on:
       - main
   workflow_dispatch:
   
->on:
->  workflow_dispatch:
->    inputs:
+//on:
+//  workflow_dispatch:
+//    inputs:
 
 env:
   BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
