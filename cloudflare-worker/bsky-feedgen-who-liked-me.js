@@ -322,7 +322,7 @@ export async function getFeedSkeleton(request, env) {
   console.log(myAccessJwtStr);
   console.log(accessJwt);
   
-  let responseMyPosts = (await fetchUser(accessJwt, payload.iss, 10));
+  let responseMyPosts = await appBskyFeedGetAuthorFeed(myAccessJwt, payload.iss, 10);
   let myFeed = responseMyPosts.feed;
   
   if (Array.isArray(myFeed)) {
