@@ -313,7 +313,7 @@ export async function getFeedSkeleton(request, env) {
   
   console.log("getFeedSkeleton");
   const myAccessJwt = request.headers.get("Authorization");
-  const myAccessJwtStr = myAccessJwt.toString().split(" ")[1];
+  const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
 
@@ -322,7 +322,7 @@ export async function getFeedSkeleton(request, env) {
   console.log(myAccessJwtStr);
   console.log(accessJwt);
   
-  let responseMyPosts = await appBskyFeedGetAuthorFeed(accessJwt, payload.iss, 10);
+  let responseMyPosts = (await fetchUser(accessJwt, payload.iss, 10));
   let myFeed = responseMyPosts.feed;
   
   if (Array.isArray(myFeed)) {
@@ -497,8 +497,8 @@ function buildQueries(allTerms, cursorParam = null) {
   return orderedQueries;
 }
 
-async function fetchUser(accessJwt, user, cursor = null) {
-  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, cursor);
+async function fetchUser(accessJwt, user, limit = 30, cursor = null) {
+  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, cursor);
   if (response !== null) {
     return await response.json();
   } else {
