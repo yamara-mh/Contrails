@@ -14,14 +14,7 @@ async function login(username, password, env) {
   let checkResult = await fetch(sessionCheck,{
     headers: {
       Authorization: `Bearer ${savedJwt}`,
-    }})
-
-
-  
-  console.log("login");
-  console.log(username);
-  console.log(password);
-  
+    }})  
 
   if(checkResult.status === 200){
     console.log('valid session.');
