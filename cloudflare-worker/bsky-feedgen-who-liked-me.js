@@ -327,16 +327,17 @@ export async function getFeedSkeleton(request, env) {
     for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
       const feedItem = myFeed[itemIdx];
       if (feedItem.post !== undefined && feedItem.post.record !== undefined) {
-        if (feedItem.reply !== undefined && query.includeReplies !== true) continue;
-        if (feedItem.reason !== undefined && query.includeReposts !== true) continue;
+        if (feedItem.reply !== undefined || feedItem.reason !== undefined) continue;
         filteredFeed.push(feedItem);
       }
     }
-    feed = filteredFeed;
+    myFeed = filteredFeed;
+
+
   }
 
-  console.log(JSON.parse(feed));
-
+  console.log(JSON.parse(myFeed));
+  console.log(JSON.parse(myFeed).length);
 
 
 
