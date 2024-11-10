@@ -9,7 +9,7 @@ async function login(username, password, env) {
     "SELECT * FROM accessJwt WHERE id = 1"
   ).all();
 
-  const savedJwt = results[0].accessJwt;e
+  const savedJwt = results[0].accessJwt;
   const sessionCheck = 'https://bsky.social/xrpc/com.atproto.server.getSession';
   let checkResult = await fetch(sessionCheck,{
     headers: {
