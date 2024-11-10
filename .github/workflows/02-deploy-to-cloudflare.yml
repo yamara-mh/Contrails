@@ -2,8 +2,14 @@ name: 2. Deploy to Cloudflare
 run-name: Deploy to Cloudflare
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
-    inputs:
+  
+>on:
+>  workflow_dispatch:
+>    inputs:
 
 env:
   BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
