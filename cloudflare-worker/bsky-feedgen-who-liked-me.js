@@ -256,11 +256,11 @@ export async function getFeedSkeleton(request, env) {
 
 
 
-
+  console.log("jwt");
   const jwt = request.headers.get("Authorization");
-  // const payload = atob(jwt);
   console.log(jwt);
-  // console.log(payload);
+  const payload = atob(jwt.split( )[1].split('.')[1]);
+  console.log(payload);
   // console.log(payload.iss);
 
 
