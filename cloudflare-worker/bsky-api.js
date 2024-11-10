@@ -1,16 +1,20 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
 
-export async function appBskyFeedGetAuthorFeed(accessJwt, did, cursor = null) {
+export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, cursor = null) {
   if (accessJwt === null) {
     return null;
   }
   let params = {
     actor: did,
-    limit: 30,
+    limit: limit,
   };
   if (cursor !== undefined && cursor !== null) {
     params.cursor = cursor;
   }
+  console.log("accessJwt");
+  console.log(accessJwt);
+  console.log(accessJwt === undefined);
+  
   const url = 
     "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
     new URLSearchParams(params);
