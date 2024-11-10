@@ -256,12 +256,14 @@ export async function getFeedSkeleton(request, env) {
 
 
 
+  
   console.log("jwt");
   const jwt = request.headers.get("Authorization");
   console.log(jwt);
-  const payload = atob(jwt.split(' ')[1].split('.')[1]);
+  const payload = atob(jwt.toString().split(' ')[1].split('.')[1]);
   console.log(payload);
   // console.log(payload.iss);
+  
 
 
 
@@ -322,30 +324,6 @@ export async function getFeedSkeleton(request, env) {
     console.warn("Dropping cursor because it has the wrong number of queries");
     origCursor = null;
   }
-
-
-
-
-
-
-
-
-
-  
-  // const did = new DidResolver({}).did;
-  // if (did == undefined) throw new Error('expected handle to resolve');
-  // else console.log(did);
-  // const did = new IdResolver().did;
-  // console.log(did);
-
-
-
-
-
-
-
-
-
   
   let items = [];
   for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
