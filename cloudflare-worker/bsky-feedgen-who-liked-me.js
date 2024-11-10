@@ -322,8 +322,13 @@ export async function getFeedSkeleton(request, env) {
   console.log(myAccessJwtStr);
   console.log(accessJwt);
   
-  let responseMyPosts = await appBskyFeedGetAuthorFeed(accessJwt, payload.iss, 10);
-  let myFeed = responseMyPosts.feed;
+  let myPostsResponse = await fetchUser(accessJwt, payload.iss, 10);
+  console.log(myPostsResponse);
+  console.log(myPostsResponse);
+  console.log(myPostsResponse.ToString());
+
+  
+  let myFeed = myPostsResponse.feed;
   
   if (Array.isArray(myFeed)) {
     // filter out replies and reposts
