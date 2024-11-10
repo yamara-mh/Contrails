@@ -259,10 +259,8 @@ export async function getFeedSkeleton(request, env) {
   
   console.log("jwt");
   const jwt = request.headers.get("Authorization");
-  console.log(jwt);
-  const payload = atob(jwt.toString().split(' ')[1].split('.')[1]);
-  console.log(payload);
-  // console.log(payload.iss);
+  var userDid = JSON.parse(atob(jwt.toString())).iss;
+  console.log(userDid);
   
 
 
