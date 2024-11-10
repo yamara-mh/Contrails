@@ -19,8 +19,8 @@ async function login(username, password, env) {
 
   
   console.log("login");
-  console.log(savedJwt);
-  console.log(checkResult.headers.get("Authorization"));
+  console.log(username);
+  console.log(password);
   
 
   if(checkResult.status === 200){
