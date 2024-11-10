@@ -316,7 +316,11 @@ export async function getFeedSkeleton(request, env) {
   const myAccessJwtStr = myAccessJwt.toString().split(" ")[1];
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
+
   console.log(payload.iss);
+  console.log(myAccessJwt);
+  console.log(myAccessJwtStr);
+  console.log(accessJwt);
   
   let responseMyPosts = await appBskyFeedGetAuthorFeed(accessJwt, payload.iss);
   let myFeed = responseMyPosts.feed;
