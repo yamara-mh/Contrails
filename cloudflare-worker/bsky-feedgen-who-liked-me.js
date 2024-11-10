@@ -318,7 +318,7 @@ export async function getFeedSkeleton(request, env) {
   const payload = JSON.parse(atob(payloadStr));
   console.log(payload.iss);
   
-  let responseMyPosts = await appBskyFeedGetAuthorFeed(myAccessJwt, payload.iss);
+  let responseMyPosts = await appBskyFeedGetAuthorFeed(accessJwt, payload.iss);
   let myFeed = responseMyPosts.feed;
   
   if (Array.isArray(myFeed)) {
