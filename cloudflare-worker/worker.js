@@ -8,6 +8,8 @@ export default {
       return await feedGeneratorWellKnown(request);
     }
     if (request.url.indexOf("/xrpc/app.bsky.feed.getFeedSkeleton") > -1) {
+      console.log("getFeedSkeleton");
+      console.log(request.headers.get("Authorization"));
       return await getFeedSkeleton(request, env);
     }
     return new Response(`{}`);
