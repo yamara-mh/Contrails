@@ -328,13 +328,15 @@ export async function getFeedSkeleton(request, env) {
   // 閲覧者のトップと最新のポストを取得
   let myFeed = [];
   await Promise.all([
-    fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false),
-    fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true)].map(async func => {
-      var result = await func;
-      if (result != null) myFeed.push(result.get("feed"));
-    }));
+    async () => {
+      let result = await fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false);
+      if (Array.isArray(result.feed)) myFeed.push(result.feed);
+    }, async () => {
+      let result = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+      if (Array.isArray(result.feed)) myFeed.push(result.feed);
+    }]);
   
-  if (Array.isArray(myFeed) == false) {
+  if (myFeed.length == 0) {
     console.error("No posts");
     return;
   }
