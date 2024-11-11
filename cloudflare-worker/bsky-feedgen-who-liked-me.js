@@ -323,22 +323,19 @@ export async function getFeedSkeleton(request, env) {
   const payload = JSON.parse(atob(payloadStr));
 
   console.log(payload.iss);
+  console.log(myAccessJwt);
   console.log(accessJwt);
   
   // 閲覧者のトップと最新のポストを取得
   let myFeed = [];
-  await Promise.all([
-    async () => {
-      const result = await fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false);
-     console.log(result);
-      if (Array.isArray(result.feed)) myFeed.push(result.feed);
-      return;
-    }, async () => {
-      const result = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
-      console.log(result);
-      if (Array.isArray(result.feed)) myFeed.push(result.feed);
-      return;
-    }]);
+  const myPosts = await Promise.allSettled([
+    fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false),
+    fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true)]);
+
+  myPosts.forEach(e => {
+    console.log(e);
+    if (Array.isArray(e.feed)) myFeed.push(...e.feed);
+  });
   
   console.log("Promised : " + myFeed.length.toString());
   
@@ -351,15 +348,15 @@ export async function getFeedSkeleton(request, env) {
   let filteredFeed = [];
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
-    const feedItem = myFeed[itemIdx];
-    if (feedItem.post === undefined || feedItem.post.record === undefined) continue;
-    if (feedItem.reply !== undefined || feedItem.reason !== undefined) continue;
-    if (feedItem.post.likeCount == 0) continue;
-    if (filteredFeed.some(f => f.uri == feedItem.uri)) continue;
+    const item = myFeed[itemIdx];
+    if (item.post === undefined || item.post.record === undefined) continue;
+    if (item.reply !== undefined || item.reason !== undefined) continue;
+    if (item.post.likeCount == 0) continue;
+    if (filteredFeed.some(f => f.uri == item.uri)) continue;
 
-    console.log([feedItem.post.record.text, feedItem.post.likeCount]);
+    console.log([item.post.record.text, item.post.likeCount]);
 
-    filteredFeed.push(feedItem.uri);
+    filteredFeed.push(item.uri);
     if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
   }
   myFeed = filteredFeed;
