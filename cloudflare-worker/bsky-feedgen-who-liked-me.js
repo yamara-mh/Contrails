@@ -6,6 +6,11 @@ import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
 
 // let's be nice
+const GET_MY_TOP_POSTS = 5;
+const GET_MY_LATEST_POSTS = 30;
+const GET_LIKES_POSTS = 10;
+const GET_LIKES_USER = 10;
+const GET_USER_LIMIT = 30;
 const DEFAULT_LIMIT = 40;
 const QUOTED_PHRASE_REGEX = /"([^"]+)"/g;
 
@@ -318,42 +323,41 @@ export async function getFeedSkeleton(request, env) {
   const payload = JSON.parse(atob(payloadStr));
 
   console.log(payload.iss);
-  console.log(myAccessJwt);
-  console.log(myAccessJwtStr);
   console.log(accessJwt);
   
-  let myPostsResponse = await fetchUser(accessJwt, payload.iss, 10);
-  console.log(myPostsResponse);
-  console.log(myPostsResponse);
-  console.log(myPostsResponse.ToString());
-
+  // 閲覧者のトップと最新のポストを取得
+  let myFeed = [];
+  await Promise.all([
+    fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false),
+    fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true)].map(async func => {
+      var result = await func;
+      if (result != null) myFeed.push(result.get("feed"));
+    }));
   
-  let myFeed = myPostsResponse.feed;
-  
-  if (Array.isArray(myFeed)) {
-    // filter out replies and reposts
-    let filteredFeed = [];
-    for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
-      const feedItem = myFeed[itemIdx];
-      if (feedItem.post !== undefined && feedItem.post.record !== undefined) {
-        if (feedItem.reply !== undefined || feedItem.reason !== undefined) continue;
-        filteredFeed.push(feedItem);
-      }
-    }
-    myFeed = filteredFeed;
-
-
+  if (Array.isArray(myFeed) == false) {
+    console.error("No posts");
+    return;
   }
 
-  console.log(JSON.parse(myFeed));
-  console.log(JSON.parse(myFeed).length);
+  // filter out replies and reposts
+  let filteredFeed = [];
+  let filteredFeedCount = 0;
+  for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
+    const feedItem = myFeed[itemIdx];
+    if (feedItem.post === undefined || feedItem.post.record === undefined) continue;
+    if (feedItem.reply !== undefined || feedItem.reason !== undefined) continue;
+    if (feedItem.post.likeCount == 0) continue;
+    if (filteredFeed.some(f => f.uri == feedItem.uri)) continue;
+
+    console.log([feedItem.post.record.text, feedItem.post.likeCount]);
+
+    filteredFeed.push(feedItem.uri);
+    if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
+  }
+  myFeed = filteredFeed;
 
 
-
-
-
-
-
+  console.log(myFeed.length);
 
   
   let items = [];
@@ -502,8 +506,8 @@ function buildQueries(allTerms, cursorParam = null) {
   return orderedQueries;
 }
 
-async function fetchUser(accessJwt, user, limit = 30, cursor = null) {
-  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, cursor);
+async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null) {
+  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor);
   if (response !== null) {
     return await response.json();
   } else {

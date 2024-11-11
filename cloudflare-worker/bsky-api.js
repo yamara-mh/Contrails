@@ -1,6 +1,6 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
 
-export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, cursor = null) {
+export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLatest = false, cursor = null) {
   if (accessJwt === null) {
     return null;
   }
@@ -12,9 +12,10 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, curso
     params.cursor = cursor;
   }
   
-  const url = 
-    "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
+  const url = "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
     new URLSearchParams(params);
+  if (isLatest) url += "&sort=latest";
+
   return await fetchGuarded(url, {
     headers: {
       Authorization: `Bearer ${accessJwt}`,
