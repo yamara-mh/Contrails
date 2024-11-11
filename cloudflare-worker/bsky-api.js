@@ -12,7 +12,7 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
     params.cursor = cursor;
   }
   
-  const url = "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
+  let url = "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" +
     new URLSearchParams(params);
   if (isLatest) url += "&sort=latest";
 
