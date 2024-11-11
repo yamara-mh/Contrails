@@ -329,16 +329,22 @@ export async function getFeedSkeleton(request, env) {
   let myFeed = [];
   await Promise.all([
     async () => {
-      let result = await fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false);
+      const result = await fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false);
+     console.log(result);
       if (Array.isArray(result.feed)) myFeed.push(result.feed);
+      return;
     }, async () => {
-      let result = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+      const result = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+      console.log(result);
       if (Array.isArray(result.feed)) myFeed.push(result.feed);
+      return;
     }]);
   
+  console.log("Promised : " + myFeed.length.toString());
+  
   if (myFeed.length == 0) {
-    console.error("No posts");
-    return;
+    console.log("No posts");
+    return jsonResponse({ feed: null, cursor: null });
   }
 
   // filter out replies and reposts
@@ -357,9 +363,6 @@ export async function getFeedSkeleton(request, env) {
     if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
   }
   myFeed = filteredFeed;
-
-
-  console.log(myFeed.length);
 
   
   let items = [];
