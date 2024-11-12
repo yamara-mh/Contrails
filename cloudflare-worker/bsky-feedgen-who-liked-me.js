@@ -5,9 +5,7 @@ import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
 
-// let's be nice
-const GET_MY_TOP_POSTS = 5;
-const GET_MY_LATEST_POSTS = 30;
+const GET_MY_LATEST_POSTS = 50;
 const GET_LIKES_POSTS = 10;
 const GET_LIKES_USER = 10;
 const GET_USER_LIMIT = 30;
@@ -326,23 +324,14 @@ export async function getFeedSkeleton(request, env) {
   console.log(myAccessJwt);
   console.log(accessJwt);
   
-  // 閲覧者のトップと最新のポストを取得
-  let myFeed = [];
-  const myPosts = await Promise.allSettled([
-    fetchUser(accessJwt, payload.iss, GET_MY_TOP_POSTS, false),
-    fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true)]);
-
-  myPosts.forEach(e => {
-    console.log(e);
-    if (Array.isArray(e.feed)) myFeed.push(...e.feed);
-  });
-  
-  console.log("Promised : " + myFeed.length.toString());
-  
-  if (myFeed.length == 0) {
+  // 閲覧者の最新ポストを取得
+  let myFeed = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+  if (Array.isArray(myFeed) == false) {
     console.log("No posts");
     return jsonResponse({ feed: null, cursor: null });
   }
+  
+  console.log("Promised : " + myFeed.length.toString());
 
   // filter out replies and reposts
   let filteredFeed = [];
