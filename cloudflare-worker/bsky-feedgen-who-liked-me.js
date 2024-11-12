@@ -329,7 +329,15 @@ export async function getFeedSkeleton(request, env) {
   let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) myFeed = myFeedHandle.feed;
 
+  console.log(myFeedHandle);
+  console.log(myFeedHandle.feed);
+  console.log(JSON.parse(myFeedHandle.feed));
+  console.log(JSON.parse(myFeedHandle.feed.toString()));
+  console.log(JSON.parse(myFeedHandle.feed.toString()).toString());
+  console.log(JSON.stringify(myFeedHandle));
+  console.log(JSON.stringify(myFeedHandle.feed));
   console.log(JSON.stringify(myFeedHandle.feed.toString()));
+  console.log(JSON.stringify(myFeedHandle.feed.toString()).toString());
 
   if (myFeed.length == 0) {
     console.log("No posts");
