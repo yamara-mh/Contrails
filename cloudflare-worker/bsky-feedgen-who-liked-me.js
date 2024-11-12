@@ -337,21 +337,29 @@ export async function getFeedSkeleton(request, env) {
   }
 
   // filter out replies and reposts
-  let filteredFeed = [];
+  let filteredPosts = [];
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx];
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
     if (item.post.likeCount == 0) continue;
-    if (filteredFeed.some(f => f.post.uri == item.post.uri)) continue;
+    if (filteredPosts.some(f => f.post.uri == item.post.uri)) continue;
 
     console.log([item.post.record.text, item.post.likeCount]);
 
-    filteredFeed.push(item.uri);
+    filteredPosts.push(item);
     if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
   }
-  myFeed = filteredFeed;
+
+
+  
+
+
+
+
+
+
 
   
   let items = [];
