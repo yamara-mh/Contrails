@@ -331,9 +331,6 @@ export async function getFeedSkeleton(request, env) {
     myFeed = myFeedHandle.feed;
   }
 
-  console.log(myFeedHandle);
-  console.log(myFeed);
-
   if (myFeed.length == 0) {
     console.log("No posts");
     return jsonResponse({ feed: null, cursor: null });
@@ -347,7 +344,7 @@ export async function getFeedSkeleton(request, env) {
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
     if (item.post.likeCount == 0) continue;
-    if (filteredFeed.some(f => f.uri == item.uri)) continue;
+    if (filteredFeed.some(f => f.post.uri == item.post.uri)) continue;
 
     console.log([item.post.record.text, item.post.likeCount]);
 
