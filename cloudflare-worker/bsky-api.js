@@ -22,3 +22,26 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
     },
   });
 }
+
+export async function appBskyFeedGetLikes(accessJwt, uri, cid, limit = 30, cursor = null) {
+  if (accessJwt === null) {
+    return null;
+  }
+  let params = {
+    uri: uri,
+    limit: limit,
+  };
+  if (cursor !== undefined && cursor !== null) {
+    params.cursor = cursor;
+  }
+  
+  let url = "https://bsky.social/xrpc/app.bsky.feed.getLikes?" +
+    new URLSearchParams(params);
+  if (isLatest) url += "&sort=latest";
+
+  return await fetchGuarded(url, {
+    headers: {
+      Authorization: `Bearer ${accessJwt}`,
+    },
+  });
+}

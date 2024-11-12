@@ -6,9 +6,12 @@ import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
 
 const GET_MY_LATEST_POSTS = 50;
-const GET_LIKES_POSTS = 10;
-const GET_LIKES_USER = 10;
-const GET_USER_LIMIT = 30;
+const GET_LIKES_POSTS = 3; // 10
+const GET_LIKES_USER = 50;
+const GET_USER_LIMIT = 5; // 20
+const GET_USER_POSTS = 30;
+const GET_USER_MEDIA_POSTS = 3;
+
 const DEFAULT_LIMIT = 40;
 const QUOTED_PHRASE_REGEX = /"([^"]+)"/g;
 
@@ -313,20 +316,18 @@ export async function getFeedSkeleton(request, env) {
 
 
 
-  
+  // ユーザの通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
+  // サーバがユーザの通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
+
   console.log("getFeedSkeleton");
   const myAccessJwt = request.headers.get("Authorization");
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
-
-  console.log(payload.iss);
-  console.log(myAccessJwt);
-  console.log(accessJwt);
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(myAccessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
@@ -336,7 +337,7 @@ export async function getFeedSkeleton(request, env) {
     return jsonResponse({ feed: null, cursor: null });
   }
 
-  // filter out replies and reposts
+  // リプライとリポストを除外
   let filteredPosts = [];
   let searchLikePorecsses = [];
   let filteredFeedCount = 0;
@@ -350,17 +351,23 @@ export async function getFeedSkeleton(request, env) {
     console.log([item.post.record.text, item.post.likeCount]);
 
     filteredPosts.push(item);
-    searchLikePorecsses.push();
+    searchLikePorecsses.push(fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER));
 
     if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
   }
 
-  await Promise.allSettled(filteredPosts);
+  // いいねした人を収集
+  let likedUsers = [];
+  const results = await Promise.allSettled(searchLikePorecsses);
+  for (let index = 0; index < results.length; index++) {
+    if (results[index].status == "rejected") continue;
+    const item = results[index].value;
+    likedUsers.push(item.likes);
+  }
 
-
-
-
-
+  console.log(likedUsers.length);
+  console.log(likedUsers);
+  
 
 
 
@@ -519,8 +526,8 @@ async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor =
     return null;
   }
 }
-async function fetchLikes(accessJwt, uri, limit = 10) {
-  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor);
+async function fetchLikes(accessJwt, uri, cid, limit = 10) {
+  let response = await appBskyFeedGetAuthorFeed(accessJwt, uri, cid, limit, isLatest, cursor);
   if (response !== null) {
     return await response.json();
   } else {
