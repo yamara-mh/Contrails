@@ -327,11 +327,12 @@ export async function getFeedSkeleton(request, env) {
   // 閲覧者の最新ポストを取得
   let myFeed = [];
   let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
-  if (Array.isArray(myFeedHandle.feed)) myFeed = myFeedHandle.feed;
+  if (Array.isArray(myFeedHandle.feed)) {
+    myFeed = myFeedHandle.feed;
+  }
 
-  console.log(Array.isArray(myFeedHandle.feed) ? "true" : "false");
+  console.log(myFeedHandle);
   console.log(myFeed);
-  console.log(myFeed.length);
 
   if (myFeed.length == 0) {
     console.log("No posts");
