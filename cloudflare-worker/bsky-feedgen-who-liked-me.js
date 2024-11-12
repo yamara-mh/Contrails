@@ -325,13 +325,16 @@ export async function getFeedSkeleton(request, env) {
   console.log(accessJwt);
   
   // 閲覧者の最新ポストを取得
-  let myFeed = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
-  if (Array.isArray(myFeed) == false) {
+  let myFeed = [];
+  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+  if (Array.isArray(myFeedHandle.feed)) myFeed = myFeedHandle.feed;
+
+  console.log(JSON.parse(myFeed));
+
+  if (myFeed.length == 0) {
     console.log("No posts");
     return jsonResponse({ feed: null, cursor: null });
   }
-  
-  console.log("Promised : " + myFeed.length.toString());
 
   // filter out replies and reposts
   let filteredFeed = [];
