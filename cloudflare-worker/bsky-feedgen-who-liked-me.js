@@ -326,7 +326,7 @@ export async function getFeedSkeleton(request, env) {
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+  let myFeedHandle = await fetchUser(myAccessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
@@ -338,6 +338,7 @@ export async function getFeedSkeleton(request, env) {
 
   // filter out replies and reposts
   let filteredPosts = [];
+  let searchLikePorecsses = [];
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx];
@@ -349,11 +350,13 @@ export async function getFeedSkeleton(request, env) {
     console.log([item.post.record.text, item.post.likeCount]);
 
     filteredPosts.push(item);
+    searchLikePorecsses.push();
+
     if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
   }
 
+  await Promise.allSettled(filteredPosts);
 
-  
 
 
 
@@ -516,6 +519,15 @@ async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor =
     return null;
   }
 }
+async function fetchLikes(accessJwt, uri, limit = 10) {
+  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor);
+  if (response !== null) {
+    return await response.json();
+  } else {
+    return null;
+  }
+}
+
 
 function feedJsonResponse(items, cursor = null) {
   let response = { feed: items };
