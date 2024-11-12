@@ -339,32 +339,30 @@ export async function getFeedSkeleton(request, env) {
 
   // リプライとリポストを除外
   let filteredPosts = [];
-  let searchLikePorecsses = [];
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx];
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
     if (item.post.likeCount == 0) continue;
+
     if (filteredPosts.some(f => f.post.uri == item.post.uri)) continue;
-
-    console.log([item.post.record.text, item.post.likeCount]);
-
     filteredPosts.push(item);
-    searchLikePorecsses.push(fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER));
-
+    
+    console.log([item.post.record.text, item.post.likeCount]);
     if (filteredFeedCount++ >= GET_LIKES_POSTS) break;
   }
 
   // いいねした人を収集
   let likedUsers = [];
-  const results = await Promise.allSettled(searchLikePorecsses);
+  const results = await Promise.allSettled(...filteredPosts).map(async item => fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER));
   for (let index = 0; index < results.length; index++) {
     if (results[index].status == "rejected") continue;
     const item = results[index].value;
     likedUsers.push(item.likes);
   }
 
+  console.log(searchLikePorecsses.length);
   console.log(likedUsers.length);
   console.log(likedUsers);
   
