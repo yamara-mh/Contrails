@@ -358,19 +358,20 @@ export async function getFeedSkeleton(request, env) {
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(async item => fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER)));
 
-  let likedUserDids = new Set();
+  const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
     if (likedUserResults[index].status === "rejected") continue;
-    likedUserDids.add(likedUserResults[index].value.userDid);
+    likedUserDidsSet.add(likedUserResults[index].value.userDid);
     console.log(likedUserResults[index].value.userDid);
   }
 
+  const likedUserDids = [...likedUserDidsSet];
   console.log("likedUserPostResults");
-  console.log([...likedUserDids].length);
-  console.log([...likedUserDids].slice(0, GET_LIKED_USER_LIMIT).length);
+  console.log(likedUserDids.length);
+  console.log(likedUserDids.slice(0, GET_LIKED_USER_LIMIT).length);
 
   const likedUserPostResults = await Promise.allSettled(
-    [...likedUserDids].slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
+    likedUserDids.slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
     .map(async item => fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
 
   console.log(likedUserPostResults);
