@@ -377,10 +377,10 @@ export async function getFeedSkeleton(request, env) {
   console.log(Object.values(likedUserDids));
 
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.map(async item =>{
+    likedUserDids.map(async item => {
       console.log(Object.keys(item));
       console.log(Object.values(item));
-      await fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS);
+      return await fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS);
     }));
 
   console.log(Object.values(likedUserPostResults));
