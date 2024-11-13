@@ -29,6 +29,7 @@ export async function appBskyFeedGetLikes(accessJwt, uri, cid, limit = 30, curso
   }
   let params = {
     uri: uri,
+    cid: cid,
     limit: limit,
   };
   if (cursor !== undefined && cursor !== null) {
@@ -37,7 +38,6 @@ export async function appBskyFeedGetLikes(accessJwt, uri, cid, limit = 30, curso
   
   let url = "https://bsky.social/xrpc/app.bsky.feed.getLikes?" +
     new URLSearchParams(params);
-  if (isLatest) url += "&sort=latest";
 
   return await fetchGuarded(url, {
     headers: {

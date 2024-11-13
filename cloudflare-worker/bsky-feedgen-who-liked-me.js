@@ -555,7 +555,7 @@ async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor =
   }
 }
 async function fetchLikes(accessJwt, uri, cid, limit = 10) {
-  let response = await appBskyFeedGetLikes(accessJwt, uri, cid, limit, isLatest, cursor);
+  let response = await appBskyFeedGetLikes(accessJwt, uri, cid, limit, cursor);
   if (response !== null) {
     return await response.json();
   } else {
