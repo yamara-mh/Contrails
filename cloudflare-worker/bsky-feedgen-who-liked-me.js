@@ -1,5 +1,5 @@
 import { CONFIGS } from "./configs";
-import { appBskyFeedGetAuthorFeed } from "./bsky-api";
+import { appBskyFeedGetAuthorFeed, appBskyFeedGetLikes } from "./bsky-api";
 import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
@@ -361,15 +361,11 @@ export async function getFeedSkeleton(request, env) {
   const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
 
-    console.log(likedUserResults[index].status);
     console.log(Object.values(likedUserResults[index]));
 
     if (likedUserResults[index].status === "rejected") continue;
     likedUserDidsSet.add(likedUserResults[index].value.userDid);
-    console.log(likedUserResults[index].value.userDid);
   }
-
-  console.log("likedUserPostResults 3");
 
   let likedUserDids = [];
   const tempArray = Array.from(likedUserDidsSet);
@@ -559,7 +555,7 @@ async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor =
   }
 }
 async function fetchLikes(accessJwt, uri, cid, limit = 10) {
-  let response = await appBskyFeedGetAuthorFeed(accessJwt, uri, cid, limit, isLatest, cursor);
+  let response = await appBskyFeedGetLikes(accessJwt, uri, cid, limit, isLatest, cursor);
   if (response !== null) {
     return await response.json();
   } else {
