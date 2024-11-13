@@ -320,7 +320,7 @@ export async function getFeedSkeleton(request, env) {
   // ユーザの通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
   // サーバがユーザの通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
 
-  console.log("getFeedSkeleton");
+  console.log("getFeedSkeleton 0");
   const myAccessJwt = request.headers.get("Authorization");
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
@@ -360,8 +360,9 @@ export async function getFeedSkeleton(request, env) {
 
   const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
-    console.log(likedUserResults[index].value);
-    console.log(likedUserResults[index].value.userDid);
+    console.log(likedUserResults[index].value.toString);
+    console.log(JSON.parse(likedUserResults[index].value));
+    console.log(likedUserResults[index].value.did);
     if (likedUserResults[index].status === "rejected") continue;
     likedUserDidsSet.add(likedUserResults[index].value.userDid);
     console.log(likedUserResults[index].value.userDid);
