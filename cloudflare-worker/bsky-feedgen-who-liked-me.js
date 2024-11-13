@@ -364,12 +364,11 @@ export async function getFeedSkeleton(request, env) {
     likedUserDids.add(likedUserResults[index].value.userDid);
     console.log(likedUserResults[index].value.userDid);
   }
-  likedUserDids = likedUserDids => [...likedUserDids].reduce((l,[k,v]) => Object.assign(l, {[k]:v}), {});
 
-  console.log(likedUserDids.length);
+  console.log(likedUserDids.count);
 
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
+    [...likedUserDids].slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
     .map(async item => fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
   for (let index = 0; index < likedUserPostResults.length; index++) {
     const feed = array[index].feed;
