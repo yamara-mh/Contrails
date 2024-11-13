@@ -365,10 +365,10 @@ export async function getFeedSkeleton(request, env) {
     console.log(likedUserResults[index].value.userDid);
   }
 
-  const likedUserDids = [...likedUserDidsSet];
-  console.log("likedUserPostResults");
+  console.log("likedUserPostResults 2");
+
+  const likedUserDids =  Array.from(likedUserDidsSet);
   console.log(likedUserDids.length);
-  console.log(likedUserDids.slice(0, GET_LIKED_USER_LIMIT).length);
 
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
