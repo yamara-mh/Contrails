@@ -361,14 +361,12 @@ export async function getFeedSkeleton(request, env) {
   const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
 
-    console.log(JSON.parse(likedUserResults[index]));
-    console.log(likedUserResults[index].value.did);
+    console.log(likedUserResults[index].status);
+    console.log(Object.values(likedUserResults[index]));
 
     if (likedUserResults[index].status === "rejected") continue;
     likedUserDidsSet.add(likedUserResults[index].value.userDid);
-
     console.log(likedUserResults[index].value.userDid);
-
   }
 
   console.log("likedUserPostResults 3");
