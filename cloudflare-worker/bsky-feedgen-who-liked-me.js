@@ -5,11 +5,11 @@ import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
 
-const GET_MY_LATEST_POSTS = 50;
-const GET_LIKES_POSTS = 3; // 10
+const GET_LATEST_MY_POSTS = 50;
+const GET_LIKES_MY_POSTS = 3; // 10
 const GET_LIKES_USER = 50;
-const GET_USER_LIMIT = 5; // 20
-const GET_USER_POSTS = 30;
+const GET_LIKED_USER_LIMIT = 5; // 20
+const GET_LIKED_USER_POSTS = 30;
 const GET_USER_MEDIA_POSTS = 3;
 
 const DEFAULT_LIMIT = 40;
@@ -308,7 +308,8 @@ export async function getFeedSkeleton(request, env) {
     origCursor = null;
   }
 
-
+  console.log(["origCursor", origCursor]);
+  
 
 
 
@@ -327,7 +328,7 @@ export async function getFeedSkeleton(request, env) {
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_MY_LATEST_POSTS, true);
+  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_LATEST_MY_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
@@ -350,22 +351,48 @@ export async function getFeedSkeleton(request, env) {
     filteredPosts.push(item);
     
     console.log([item.post.record.text, item.post.likeCount]);
-    if (++filteredFeedCount >= GET_LIKES_POSTS) break;
+    if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
 
   // いいねした人を収集
-  const likedUserDids = new Set();
-  const results = await Promise.allSettled(filteredPosts.map(async item => fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER)));
-  for (let index = 0; index < results.length; index++) {
-    if (results[index].status == "rejected") continue;
-    likedUserDids.add(results[index].value.userDid);
-    console.log(results[index].value.userDid);
-    
+  const likedUserResults = await Promise.allSettled(
+    filteredPosts.map(async item => fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER)));
+
+  let likedUserDids = new Set();
+  for (let index = 0; index < likedUserResults.length; index++) {
+    if (likedUserResults[index].status === "rejected") continue;
+    likedUserDids.add(likedUserResults[index].value.userDid);
+    console.log(likedUserResults[index].value.userDid);
   }
+  likedUserDids = Array.from(map.entries())
+    .map(([k,v]) => ({[k]:v}))
+    .reduce((l,r) => Object.assign(l, r), {});
 
   console.log(likedUserDids.length);
-  console.log(likedUserDids);
-  
+
+  const likedUserPostResults = await Promise.allSettled(
+    likedUserDids.slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
+    .map(async item => fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
+  for (let index = 0; index < likedUserPostResults.length; index++) {
+    const feed = array[index].feed;
+    console.log(feed);
+    
+    for (let pi = 0; pi < array.length; pi++) {
+      const post = feed[pi];
+      console.log(post);
+
+      
+    }
+  }
+
+
+
+
+
+
+
+
+
 
   
   let items = [];
