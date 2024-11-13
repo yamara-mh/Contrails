@@ -365,24 +365,22 @@ export async function getFeedSkeleton(request, env) {
     console.log(likedUserResults[index].value.userDid);
   }
 
-  console.log(likedUserDids.count);
-
+  console.log("likedUserPostResults");
   const likedUserPostResults = await Promise.allSettled(
     [...likedUserDids].slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
     .map(async item => fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
   for (let index = 0; index < likedUserPostResults.length; index++) {
-    const feed = array[index].feed;
+    if (likedUserPostResults[index].status === "rejected") continue;
+    const feed = likedUserPostResults[index].feed;
     console.log(feed);
     
-    for (let pi = 0; pi < array.length; pi++) {
+    for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
       console.log(post);
-      
-
     }
   }
 
-
+  console.log("allSettled");
 
 
 
