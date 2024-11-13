@@ -26,7 +26,7 @@ export async function fetchGuarded() {
       return null;
     } else {
       var handle = await fetch(...arguments);
-      console.log(`fetch ${fetchCount} : ${Object.values(handle)}`);
+      console.log(`fetch ${fetchCount} : ${JSON.parse(handle)}`);
       return handle;
     }
   }

@@ -320,7 +320,7 @@ export async function getFeedSkeleton(request, env) {
   // ユーザの通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
   // サーバがユーザの通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
 
-  console.log("getFeedSkeleton 1");
+  console.log("getFeedSkeleton");
   const myAccessJwt = request.headers.get("Authorization");
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
@@ -356,7 +356,7 @@ export async function getFeedSkeleton(request, env) {
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  console.log(Object.values(likedUserResults));
+  console.log(`likedUserResults ${Object.keys(likedUserResults)} : ${Object.values(likedUserResults)}`);
 
   const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
@@ -370,16 +370,16 @@ export async function getFeedSkeleton(request, env) {
       .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
   }
 
-  console.log(Object.values(likedUserDids));
+  console.log(`likedUserDids : \n ${likedUserDids} \n ${Object.values(likedUserDids)}`);
 
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.map(async item => {
+    likedUserDids.map(item => {
       console.log(Object.keys(item));
       console.log(Object.values(item));
-      return await fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS);
+      return fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS);
     }));
 
-  console.log(Object.values(likedUserPostResults));
+  console.log(`likedUserPostResults : \n ${likedUserPostResults} \n ${Object.values(likedUserPostResults)}`);
 
   for (let index = 0; index < likedUserPostResults.length; index++) {
     if (likedUserPostResults[index].status === "rejected") continue;
