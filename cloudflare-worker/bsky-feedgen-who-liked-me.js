@@ -369,14 +369,19 @@ export async function getFeedSkeleton(request, env) {
   }
 
   let likedUserDids = [];
-  if (likedUserDidsSet.count > 0) likedUserDids = Array.from(likedUserDidsSet);
+  if (likedUserDidsSet.count > 0){
+    likedUserDids = Array.from(likedUserDidsSet)
+      .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
+  }
+
   console.log(Object.values(likedUserDids));
 
-  console.log(Object.values(likedUserDids.slice(0, GET_LIKED_USER_LIMIT)));
-
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
-    .map(async item => await fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
+    likedUserDids.map(async item =>{
+      console.log(Object.keys(item));
+      console.log(Object.values(item));
+      await fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS);
+    }));
 
   console.log(Object.values(likedUserPostResults));
 
