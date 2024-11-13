@@ -358,10 +358,11 @@ export async function getFeedSkeleton(request, env) {
   
   // いいねした人を収集
   const likedUserResults = await Promise.allSettled(
-    filteredPosts.map(async (_, item) => {
-      console.log(Object.values(item));
-      console.log(item.uri.toString());
-      return await fetchLikes(accessJwt, item.uri.toString(), GET_LIKES_USER);
+    filteredPosts.map(async item => {
+      console.log(Object.keys(item));
+      console.log(item.uri);
+      var result = await fetchLikes(accessJwt, item.uri, GET_LIKES_USER);
+      return result;
     }));
 
   console.log(Object.values(likedUserResults));
