@@ -354,12 +354,14 @@ export async function getFeedSkeleton(request, env) {
     if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
 
+  console.log();
+  
   // いいねした人を収集
   const likedUserResults = await Promise.allSettled(
-    filteredPosts.map(async item => {
-      console.log(Object.values(item[0]));
-      console.log(item[0].uri.toString());
-      return await fetchLikes(accessJwt, item[0].uri.toString(), GET_LIKES_USER);
+    filteredPosts.map(async (_, item) => {
+      console.log(Object.values(item));
+      console.log(item.uri.toString());
+      return await fetchLikes(accessJwt, item.uri.toString(), GET_LIKES_USER);
     }));
 
   console.log(Object.values(likedUserResults));
