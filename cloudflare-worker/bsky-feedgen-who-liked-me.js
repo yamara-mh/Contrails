@@ -357,8 +357,8 @@ export async function getFeedSkeleton(request, env) {
   // いいねした人を収集
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(async item => {
-      console.log(Object.values(item));
-      return fetchLikes(accessJwt, item.uri, null, GET_LIKES_USER);
+      console.log(item.uri);
+      return await fetchLikes(accessJwt, item.uri, GET_LIKES_USER);
     }));
 
   console.log(Object.values(likedUserResults));
@@ -376,7 +376,7 @@ export async function getFeedSkeleton(request, env) {
 
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT)
-    .map(async item => fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
+    .map(async item => await fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
 
   console.log(likedUserPostResults);
   console.log(likedUserPostResults.length);
@@ -550,26 +550,17 @@ function buildQueries(allTerms, cursorParam = null) {
 
 async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null) {
   let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor);
-  if (response !== null) {
-    return await response.json();
-  } else {
-    return null;
-  }
+  if (response !== null) return await response.json();
+  return null;
 }
-async function fetchLikes(accessJwt, uri, cid = null, limit = 10) {
-  let response = await appBskyFeedGetLikes(accessJwt, uri, cid, limit, cursor);
-  if (response !== null) {
-    return await response.json();
-  } else {
-    return null;
-  }
+async function fetchLikes(accessJwt, uri, limit = 10, cid = null) {
+  let response = await appBskyFeedGetLikes(accessJwt, uri, limit, cid, cursor);
+  if (response !== null) return await response.json();
+  return null;
 }
-
 
 function feedJsonResponse(items, cursor = null) {
   let response = { feed: items };
-  if (cursor !== null) {
-    response.cursor = cursor;
-  }
+  if (cursor !== null) response.cursor = cursor;
   return jsonResponse(response);
 }

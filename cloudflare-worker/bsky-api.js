@@ -18,7 +18,7 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
   });
 }
 
-export async function appBskyFeedGetLikes(accessJwt, uri, cid = null, limit = 30, cursor = null) {
+export async function appBskyFeedGetLikes(accessJwt, uri, limit = 30, cid = null, cursor = null) {
   if (accessJwt === null) return null;
   let params = {
     uri: uri,
