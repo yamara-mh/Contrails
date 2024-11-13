@@ -346,15 +346,11 @@ export async function getFeedSkeleton(request, env) {
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
     if (item.post.likeCount == 0) continue;
-
     if (filteredPosts.some(f => f.post.uri == item.post.uri)) continue;
+
     filteredPosts.push(item);
-    
-    console.log([item.post.record.text, item.post.likeCount]);
     if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
-
-  console.log();
   
   // いいねした人を収集
   const likedUserResults = await Promise.allSettled(
