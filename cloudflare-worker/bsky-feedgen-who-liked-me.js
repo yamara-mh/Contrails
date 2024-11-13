@@ -356,13 +356,15 @@ export async function getFeedSkeleton(request, env) {
 
   // いいねした人を収集
   const likedUserResults = await Promise.allSettled(
-    filteredPosts.map(async item => fetchLikes(accessJwt, item.uri, item.cid, GET_LIKES_USER)));
+    filteredPosts.map(async item => {
+      console.log(Object.values(item));
+      return fetchLikes(accessJwt, item.uri, null, GET_LIKES_USER);
+    }));
+
+  console.log(Object.values(likedUserResults));
 
   const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
-
-    console.log(Object.values(likedUserResults[index]));
-
     if (likedUserResults[index].status === "rejected") continue;
     likedUserDidsSet.add(likedUserResults[index].value.userDid);
   }
@@ -554,7 +556,7 @@ async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor =
     return null;
   }
 }
-async function fetchLikes(accessJwt, uri, cid, limit = 10) {
+async function fetchLikes(accessJwt, uri, cid = null, limit = 10) {
   let response = await appBskyFeedGetLikes(accessJwt, uri, cid, limit, cursor);
   if (response !== null) {
     return await response.json();
