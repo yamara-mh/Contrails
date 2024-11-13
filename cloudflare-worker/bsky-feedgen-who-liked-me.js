@@ -363,7 +363,6 @@ export async function getFeedSkeleton(request, env) {
     
   }
 
-  console.log(searchLikePorecsses.length);
   console.log(likedUserDids.length);
   console.log(likedUserDids);
   
