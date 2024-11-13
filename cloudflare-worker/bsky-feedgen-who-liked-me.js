@@ -364,9 +364,7 @@ export async function getFeedSkeleton(request, env) {
     likedUserDids.add(likedUserResults[index].value.userDid);
     console.log(likedUserResults[index].value.userDid);
   }
-  likedUserDids = Array.from(map.entries())
-    .map(([k,v]) => ({[k]:v}))
-    .reduce((l,r) => Object.assign(l, r), {});
+  likedUserDids = likedUserDids => [...likedUserDids].reduce((l,[k,v]) => Object.assign(l, {[k]:v}), {});
 
   console.log(likedUserDids.length);
 
@@ -380,8 +378,8 @@ export async function getFeedSkeleton(request, env) {
     for (let pi = 0; pi < array.length; pi++) {
       const post = feed[pi];
       console.log(post);
-
       
+
     }
   }
 
