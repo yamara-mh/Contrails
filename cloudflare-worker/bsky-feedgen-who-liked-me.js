@@ -379,11 +379,11 @@ export async function getFeedSkeleton(request, env) {
     console.log(Object.values(likedUserPostResults[index]));
     if (likedUserPostResults[index].status === "rejected") continue;
     const feed = likedUserPostResults[index].value.feed;
-    console.log(Object.keys(feed));
-    console.log(Object.values(feed));
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
-      const post = feed[pi].post;
+      const post = feed[pi];
+      console.log(Object.keys(feed));
+      console.log(Object.values(feed));
     }
   }
 
