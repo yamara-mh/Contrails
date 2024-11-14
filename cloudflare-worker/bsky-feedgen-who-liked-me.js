@@ -356,12 +356,10 @@ export async function getFeedSkeleton(request, env) {
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  const likedUserDidsSet = new Set();
-  for (let index = 0; index < likedUserResults.length; index++) {
-    console.log(likedUserResults[index].status);
-    if (likedUserResults[index].status === "rejected") continue;
-    console.log(Object.values(likedUserResults[index]));
-    likedUserDidsSet.add(likedUserResults[index].value.did);
+  for (let ri = 0; ri < likedUserResults.length; ri++) {
+    if (likedUserResults[ri].status === "rejected") continue;
+    const likes = likedUserResults[ri].likes;
+    for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
   }
 
   let likedUserDids = [];
@@ -370,7 +368,7 @@ export async function getFeedSkeleton(request, env) {
       .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
   }
 
-  console.log(`likedUserDids : \n ${likedUserDids} \n ${Object.values(likedUserDids)}`);
+  console.log(`likedUserDids : \n ${likedUserDids.length} \n ${Object.values(likedUserDids)}`);
 
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.map(item => {
