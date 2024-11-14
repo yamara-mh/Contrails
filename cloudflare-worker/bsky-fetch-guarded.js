@@ -17,7 +17,6 @@ function getSafeMode() {
 export async function fetchGuarded() {
   if (getSafeMode() === false) {
     fetchCount++;
-    console.log(`fetch ${fetchCount}`);
     return await fetch(...arguments);
   } else {
     fetchCount++;
@@ -25,9 +24,7 @@ export async function fetchGuarded() {
       console.log(`NOT fetching ${fetchCount}`);
       return null;
     } else {
-      var handle = await fetch(...arguments);
-      console.log(`fetch ${fetchCount} : ${Object.keys(handle)} ${Object.values(handle)}`);
-      return handle;
+      return await fetch(...arguments);
     }
   }
 }

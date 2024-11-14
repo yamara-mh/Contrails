@@ -352,7 +352,7 @@ export async function getFeedSkeleton(request, env) {
     if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
   
-  // いいねした人を収集
+  // いいねした人を取得
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
@@ -368,22 +368,20 @@ export async function getFeedSkeleton(request, env) {
 
   console.log(`likedUserDids : \n ${Object.values(likedUserDids)}`);
 
-  // const a = await fetchUser(accessJwt, likedUserDids[0], GET_LIKED_USER_POSTS, true);
-  // console.log(Object.keys(a));
-  // console.log(Object.values(a));
-
+  // いいねした人のポストを取得
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.map(item => fetchUser(accessJwt, item, GET_LIKED_USER_POSTS, true)));
 
+  console.log(likedUserPostResults.length.toString());
+
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
-    console.log(Object.values(likedUserPostResults[ri]));
     if (likedUserPostResults[ri].status === "rejected") continue;
+    console.log(Object.values(likedUserPostResults[ri].value));
+    console.log(Object.values(likedUserPostResults[ri].value.feed.length));
     const feed = likedUserPostResults[ri].value.feed;
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
-      console.log(Object.keys(post));
-      console.log(Object.values(post));
     }
   }
 
