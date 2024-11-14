@@ -9,7 +9,7 @@ const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 3; // 10
 const GET_LIKES_USER = 50;
 const GET_LIKED_USER_LIMIT = 5; // 20
-const GET_LIKED_USER_POSTS = 30;
+const GET_LIKED_USER_POSTS = 10;
 const GET_USER_MEDIA_POSTS = 3;
 
 const DEFAULT_LIMIT = 40;
@@ -375,12 +375,13 @@ export async function getFeedSkeleton(request, env) {
   console.log(likedUserPostResults.length);
 
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
-    console.log(Object.values(likedUserPostResults[ri]));
+    // console.log(Object.values(likedUserPostResults[ri]));
     if (likedUserPostResults[ri].status === "rejected") continue;
     const feed = likedUserPostResults[ri].value.feed;
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
+      console.log(post.record.text);
     }
   }
 
