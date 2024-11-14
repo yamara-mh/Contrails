@@ -369,21 +369,17 @@ export async function getFeedSkeleton(request, env) {
   console.log(`likedUserDids : \n ${Object.values(likedUserDids)}`);
 
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.map(item => {
-      console.log(Object.keys(item));
-      console.log(Object.values(item));
-      return fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS);
-    }));
+    likedUserDids.map(item => fetchUser(accessJwt, item.did, GET_LIKED_USER_POSTS)));
 
-  for (let index = 0; index < likedUserPostResults.length; index++) {
-    console.log(Object.values(likedUserPostResults[index]));
-    if (likedUserPostResults[index].status === "rejected") continue;
-    const feed = likedUserPostResults[index].value.feed;
+  for (let ri = 0; ri < likedUserPostResults.length; ri++) {
+    console.log(Object.values(likedUserPostResults[ri]));
+    if (likedUserPostResults[ri].status === "rejected") continue;
+    const feed = likedUserPostResults[ri].value.feed;
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
-      console.log(Object.keys(feed));
-      console.log(Object.values(feed));
+      console.log(Object.keys(post));
+      console.log(Object.values(post));
     }
   }
 
