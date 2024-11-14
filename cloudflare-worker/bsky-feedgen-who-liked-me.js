@@ -356,27 +356,17 @@ export async function getFeedSkeleton(request, env) {
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  console.log(Object.values(likedUserResults));
-  
   const likedUserDidsSet = new Set();
   for (let ri = 0; ri < likedUserResults.length; ri++) {
     if (likedUserResults[ri].status === "rejected") continue;
     const likes = likedUserResults[ri].value.likes;
-    for (let li = 0; li < likes.length; li++){
-      console.log(likes[li].actor.did);
-      
-      likedUserDidsSet.add(likes[li].actor.did);
-    }
+    for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
   }
 
-  console.log(Object.values(likedUserDidsSet));
-  console.log(likedUserDidsSet.count);
+  console.log(likedUserDidsSet.toString());
 
-  let likedUserDids = [];
-  if (likedUserDidsSet.count > 0){
-    likedUserDids = Array.from(likedUserDidsSet)
-      .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
-  }
+  const likedUserDids = Array.from(likedUserDidsSet)
+    .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
 
   console.log(`likedUserDids : \n ${Object.values(likedUserDids)}`);
 
