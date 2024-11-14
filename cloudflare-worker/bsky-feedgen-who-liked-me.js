@@ -362,8 +362,15 @@ export async function getFeedSkeleton(request, env) {
   for (let ri = 0; ri < likedUserResults.length; ri++) {
     if (likedUserResults[ri].status === "rejected") continue;
     const likes = likedUserResults[ri].value.likes;
-    for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
+    for (let li = 0; li < likes.length; li++){
+      console.log(likes[li].actor.did);
+      
+      likedUserDidsSet.add(likes[li].actor.did);
+    }
   }
+
+  console.log(Object.values(likedUserDidsSet));
+  console.log(likedUserDidsSet.count);
 
   let likedUserDids = [];
   if (likedUserDidsSet.count > 0){
@@ -371,7 +378,7 @@ export async function getFeedSkeleton(request, env) {
       .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
   }
 
-  console.log(`likedUserDids : \n ${likedUserDids.length} \n ${Object.values(likedUserDids)}`);
+  console.log(`likedUserDids : \n ${Object.values(likedUserDids)}`);
 
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.map(item => {
