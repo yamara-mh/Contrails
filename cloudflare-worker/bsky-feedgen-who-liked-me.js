@@ -356,6 +356,9 @@ export async function getFeedSkeleton(request, env) {
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
+    console.log(Object.keys(likedUserResults));
+  console.log(Object.values(likedUserResults));
+  
   for (let ri = 0; ri < likedUserResults.length; ri++) {
     if (likedUserResults[ri].status === "rejected") continue;
     const likes = likedUserResults[ri].likes;
