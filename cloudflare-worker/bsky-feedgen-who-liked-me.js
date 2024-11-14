@@ -363,8 +363,6 @@ export async function getFeedSkeleton(request, env) {
     for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
   }
 
-  console.log(likedUserDidsSet.toString());
-
   const likedUserDids = Array.from(likedUserDidsSet)
     .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
 
@@ -381,11 +379,11 @@ export async function getFeedSkeleton(request, env) {
     console.log(Object.values(likedUserPostResults[index]));
     if (likedUserPostResults[index].status === "rejected") continue;
     const feed = likedUserPostResults[index].value.feed;
-    console.log(feed);
+    console.log(Object.keys(feed));
+    console.log(Object.values(feed));
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
-      const post = feed[pi];
-      console.log(post);
+      const post = feed[pi].post;
     }
   }
 
