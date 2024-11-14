@@ -351,23 +351,17 @@ export async function getFeedSkeleton(request, env) {
     filteredPosts.push(item);
     if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
-
-  const a = await fetchLikes(accessJwt, filteredPosts[0].post.uri, GET_LIKES_USER);
-  console.log(Object.values(a));
-  
   
   // いいねした人を収集
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  console.log(`likedUserResults ${Object.keys(likedUserResults)} : ${likedUserResults.length}`);
-
   const likedUserDidsSet = new Set();
   for (let index = 0; index < likedUserResults.length; index++) {
     console.log(likedUserResults[index].status);
     if (likedUserResults[index].status === "rejected") continue;
-    console.log(likedUserResults[index].value.actor.did);
-    likedUserDidsSet.add(likedUserResults[index].value.actor.did);
+    console.log(Object.values(likedUserResults[index]));
+    likedUserDidsSet.add(likedUserResults[index].value.did);
   }
 
   let likedUserDids = [];
