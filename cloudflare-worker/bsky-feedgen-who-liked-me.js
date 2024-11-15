@@ -389,6 +389,43 @@ export async function getFeedSkeleton(request, env) {
 
   console.log("allSettled");
 
+
+
+  for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
+    let query = allQueries[queryIdx];
+    let queryCursor = null;
+    if (origCursor !== null) {
+      queryCursor = origCursor[queryIdx];
+    }
+    console.log(`query: ${JSON.stringify(query)}`);
+    if (query.type === "search") {
+      let offset = objSafeGet(queryCursor, "offset", 0);
+      let searchParams = {
+        offset: offset,
+        count: 30,
+      };
+      let response = await searchPost(query.value, searchParams, accessJwt);
+      if (response !== null) {
+       // items.push(...fromSearch(query, queryIdx, response.posts, searchParams));
+      }
+    } else if (query.type === "user") {
+      let cursor = objSafeGet(queryCursor, "cursor", null);
+      let response = await fetchUser(accessJwt, query.value, cursor);
+      if (response !== null) {
+        // items.push(...fromUser(query, queryIdx, response, { cursor: cursor }));
+      }
+    } else if (query.type === "post") {
+      if (showPins) {
+        let response = await staticPost(query.value);
+        if (response !== null) {
+          // items.push(...fromPost(response));
+        }
+      }
+    } else {
+      console.warn(`Unknown item type ${query.type}`);
+    }
+  }
+
   items = items.toSorted((b, a) =>
     a.timestamp === b.timestamp ? 0 : a.timestamp < b.timestamp ? -1 : 1
   );
