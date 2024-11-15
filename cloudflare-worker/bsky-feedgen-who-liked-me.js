@@ -300,7 +300,6 @@ export async function getFeedSkeleton(request, env) {
   accessJwt = await loginWithEnv(env);
 
   const numQueries = allQueries.length;
-  /*
   let origCursor = loadCursor(cursorParam);
   if (origCursor.length === 0) {
     origCursor = null;
@@ -310,7 +309,6 @@ export async function getFeedSkeleton(request, env) {
   }
 
   console.log(["origCursor", origCursor]);
-  // */
   
 
 
@@ -392,15 +390,13 @@ export async function getFeedSkeleton(request, env) {
   console.log("allSettled");
 
 
-
+/*
   for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
     let query = allQueries[queryIdx];
     let queryCursor = null;
-    /*
     if (origCursor !== null) {
       queryCursor = origCursor[queryIdx];
     }
-    // */
     console.log(`query: ${JSON.stringify(query)}`);
     if (query.type === "search") {
       let offset = objSafeGet(queryCursor, "offset", 0);
@@ -429,6 +425,7 @@ export async function getFeedSkeleton(request, env) {
       console.warn(`Unknown item type ${query.type}`);
     }
   }
+  // */
 
   items = items.toSorted((b, a) =>
     a.timestamp === b.timestamp ? 0 : a.timestamp < b.timestamp ? -1 : 1
@@ -453,8 +450,8 @@ export async function getFeedSkeleton(request, env) {
     feed.push(feedItem);
   }
 
-  let cursor = saveCursor(items, numQueries);
-  return jsonResponse({ feed: feed, cursor: cursor });
+  // let cursor = saveCursor(items, numQueries);
+  return jsonResponse({ feed: feed, cursor: null });
 }
 
 function loadCursor(cursorParam) {
