@@ -382,7 +382,6 @@ export async function getFeedSkeleton(request, env) {
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
-      console.log(Object.values(post));
       items.push(post);
     }
   }
@@ -425,20 +424,11 @@ export async function getFeedSkeleton(request, env) {
       console.warn(`Unknown item type ${query.type}`);
     }
   }
-  // */
 
   items = items.toSorted((b, a) =>
     a.timestamp === b.timestamp ? 0 : a.timestamp < b.timestamp ? -1 : 1
   );
-
-  if (config.denyList.size > 0) {
-    items = items.filter((item) => {
-      let did = item.atURL.split("/")[2];
-      return !config.denyList.has(did);
-    });
-  }
-
-  items = items.slice(0, limit);
+  // */
 
   let feed = [];
   for (let item of items) {
@@ -450,8 +440,8 @@ export async function getFeedSkeleton(request, env) {
     feed.push(feedItem);
   }
 
-  // let cursor = saveCursor(items, numQueries);
-  return jsonResponse({ feed: feed, cursor: null });
+  let cursor = saveCursor(items, numQueries);
+  return jsonResponse({ feed: feed, cursor: cursor });
 }
 
 function loadCursor(cursorParam) {
