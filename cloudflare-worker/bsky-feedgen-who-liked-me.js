@@ -432,7 +432,7 @@ export async function getFeedSkeleton(request, env) {
   // */
 
   const feed = [];  
-  if (items.length > 0) feed.push(...items.map(i => { post: item.post.uri }));
+  if (items.length > 0) feed.push(...items.map(i => { post: i.post.uri }));
   /*
   for (let item of items) {
     let feedItem = { post: item.post.uri };
