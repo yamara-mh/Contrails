@@ -377,7 +377,7 @@ export async function getFeedSkeleton(request, env) {
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
 
-      console.log(Object.values(post));
+      console.log(`post ${Object.values(post)}`);
       
       items.push(post);
     }
@@ -433,7 +433,7 @@ export async function getFeedSkeleton(request, env) {
   for (let item of items) {
     let postReason = item.postReason;
     let feedItem = { post: item.uri };
-    console.log(item.uri);
+    console.log(item.uri.toString());
     if (postReason !== null) {
       // TODO add feedItem["reason"]
     }
