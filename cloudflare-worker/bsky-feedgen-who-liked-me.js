@@ -305,9 +305,6 @@ export async function getFeedSkeleton(request, env) {
     origCursor = null;
   }
 
-  console.log(["origCursor", origCursor]);
-  
-
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
 
@@ -433,6 +430,7 @@ export async function getFeedSkeleton(request, env) {
   for (let item of items) {
     let postReason = item.postReason;
     let feedItem = { post: item.atURL };
+    console.log(item.atURL);
     if (postReason !== null) {
       // TODO add feedItem["reason"]
     }
