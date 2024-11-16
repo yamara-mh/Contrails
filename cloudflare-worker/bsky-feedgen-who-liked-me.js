@@ -437,8 +437,8 @@ export async function getFeedSkeleton(request, env) {
     feed.push(feedItem);
   }
 
-  // let cursor = saveCursor(items, numQueries);
-  return jsonResponse({ feed: feed, cursor: "" });
+  let cursor = saveCursor(items, 1);
+  return jsonResponse({ feed: feed, cursor: cursor });
 }
 
 function loadCursor(cursorParam) {
