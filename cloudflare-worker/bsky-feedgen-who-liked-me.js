@@ -376,7 +376,7 @@ export async function getFeedSkeleton(request, env) {
       if (item.reply !== undefined || item.reason !== undefined) continue;
       filterdPosts.push(item);
     }
-    
+    // いいねが多い順に表示
     filterdPosts = filterdPosts
       .toSorted((b, a) => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
 
@@ -430,10 +430,10 @@ export async function getFeedSkeleton(request, env) {
   const feed = [];
   console.log(items.length);
   
-  // if (items.length > 0) feed.push(...items.map(i => i.uri));
+  // if (items.length > 0) feed.push(...items.map(i => { post: item.uri }));
 
   for (let item of items) {
-    let feedItem = { post: item.uri };
+    let feedItem = { post: item.post.uri };
     feed.push(feedItem);
   }
 
