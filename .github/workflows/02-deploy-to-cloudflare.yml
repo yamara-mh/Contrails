@@ -35,10 +35,7 @@ jobs:
       - name: Populate wrangler.toml
         run: |
           >wrangler.toml
-          if [[ ${{ github.event.inputs.target }} == develop ]]; then
-            echo "name = \"${{ env.CLOUDFLARE_DEV_WORKER_NAME }}\"" >>wrangler.toml
-          else 
-            echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\"" >>wrangler.toml
+          echo "name = \"${{ env.CLOUDFLARE_DEV_WORKER_NAME }}\"" >>wrangler.toml
           echo compatibility_date = \"2023-05-30\" >>wrangler.toml
           echo \[\[ d1_databases \]\] >>wrangler.toml
           echo binding = \"DB\"  >>wrangler.toml
