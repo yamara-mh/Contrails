@@ -34,8 +34,15 @@ jobs:
           python render-configs.py
       - name: Populate wrangler.toml
         run: |
+          TARGET=${{ github.event.inputs.target }}
+          if [ "$TARGET" = "develop" ]; then
+            WORKER_NAME=${{ env.CLOUDFLARE_DEV_WORKER_NAME }}
+          else
+            WORKER_NAME=${{ env.CLOUDFLARE_WORKER_NAME }}
+          fi
+
           >wrangler.toml
-          echo "name = \"${{ env.CLOUDFLARE_DEV_WORKER_NAME }}\"" >>wrangler.toml
+          echo "name = \"$WORKER_NAME\"" >>wrangler.toml
           echo compatibility_date = \"2023-05-30\" >>wrangler.toml
           echo \[\[ d1_databases \]\] >>wrangler.toml
           echo binding = \"DB\"  >>wrangler.toml
