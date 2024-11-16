@@ -383,7 +383,7 @@ export async function getFeedSkeleton(request, env) {
     filterdPosts = filterdPosts
       .toSorted((b, a) => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
 
-    const sliceCount = min(GET_USER_POSTS, filterdPosts.length);
+    const sliceCount = Math.min(GET_USER_POSTS, filterdPosts.length);
     if (sliceCount > 0) items.push(...filterdPosts.slice(0, sliceCount));
   }
 
