@@ -257,7 +257,7 @@ export async function getFeedSkeleton(request, env) {
   let cursorParam = url.searchParams.get("cursor");
 
   
-  console.log(["cursor", cursorParam, Object.values(cursorParam)]);
+  console.log(["cursor", cursorParam]);
 
 
   if (
