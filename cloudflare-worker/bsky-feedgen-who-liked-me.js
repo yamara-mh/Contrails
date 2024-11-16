@@ -432,8 +432,8 @@ export async function getFeedSkeleton(request, env) {
   let feed = [];
   for (let item of items) {
     let postReason = item.postReason;
-    let feedItem = { post: item.atURL };
-    console.log(item.atURL);
+    let feedItem = { post: item.uri };
+    console.log(item.uri);
     if (postReason !== null) {
       // TODO add feedItem["reason"]
     }
