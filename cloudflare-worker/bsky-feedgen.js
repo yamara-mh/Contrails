@@ -360,7 +360,7 @@ export async function getFeedSkeleton(request, env) {
   let feed = [];
   for (let item of items) {
     let postReason = item.postReason;
-    let feedItem = { post: item.atURL };
+    let feedItem = { post: item.atURL + "&limit=3" };
     if (postReason !== null) {
       // TODO add feedItem["reason"]
     }
@@ -370,10 +370,8 @@ export async function getFeedSkeleton(request, env) {
   let cursor = saveCursor(items, numQueries);
 
   console.log(JSON.stringify(feed));
-  console.log(numQueries);
-  console.log(cursor);
   
-  return jsonResponse({ feed: feed, cursor: cursor });
+  return jsonResponse({ feed: feed }); // , cursor: cursor
 }
 
 function loadCursor(cursorParam) {
