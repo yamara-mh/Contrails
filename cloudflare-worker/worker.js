@@ -9,7 +9,7 @@ export default {
       return await feedGeneratorWellKnown(request);
     }
     if (request.url.indexOf("/xrpc/app.bsky.feed.getFeedSkeleton") > -1) {
-      return await getFeedSkeleton(request, env);
+      return await getFeedSkeleton(request, env, ctx);
     }
     return new Response(`{}`);
   },

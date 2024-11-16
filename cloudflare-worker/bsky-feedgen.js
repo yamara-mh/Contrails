@@ -255,7 +255,6 @@ export async function getFeedSkeleton(request, env) {
     return feedJsonResponse([]);
   }
   let cursorParam = url.searchParams.get("cursor");
-
   if (
     cursorParam === undefined ||
     cursorParam === null ||
@@ -368,10 +367,7 @@ export async function getFeedSkeleton(request, env) {
   }
 
   let cursor = saveCursor(items, numQueries);
-
-  console.log(JSON.stringify(feed));
-  
-  return jsonResponse({ feed: feed }); // , cursor: cursor
+  return jsonResponse({ feed: feed, cursor: cursor });
 }
 
 function loadCursor(cursorParam) {

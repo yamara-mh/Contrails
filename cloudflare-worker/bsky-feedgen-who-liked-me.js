@@ -12,8 +12,6 @@ const GET_LIKED_USER_LIMIT = 5; // 20
 const GET_LIKED_USER_POSTS = 50;
 const GET_USER_POSTS = 3;
 
-const QUOTED_PHRASE_REGEX = /"([^"]+)"/g;
-
 export async function feedGeneratorWellKnown(request) {
   let host = request.headers.get("Host");
   let didJson = {
@@ -33,22 +31,17 @@ export async function feedGeneratorWellKnown(request) {
   return jsonResponse(didJson);
 }
 
-export async function getFeedSkeleton(request, env) {  
+export async function getFeedSkeleton(request, env, ctx) {  
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
   if (feedAtUrl === null) {
     console.warn(`feed parameter missing from query string`);
     return feedJsonResponse([]);
   }
-  let cursorParam = url.searchParams.get("cursor");
-  if (cursorParam === undefined || cursorParam === null || cursorParam.trim().length == 0 ) {
-    cursorParam = null;
-  }
-  const showPins = cursorParam === null;
+
   let words = feedAtUrl.split("/");
   let feedId = words[words.length - 1];
   let config = CONFIGS[feedId];
-
   if (config === undefined) {
     console.warn(`Could not find Feed ID ${feedId}`);
     return feedJsonResponse([]);
@@ -57,14 +50,27 @@ export async function getFeedSkeleton(request, env) {
     console.warn(`Feed ID ${feedId} is not enabled`);
     return feedJsonResponse([]);
   }
+
+
+
+
+  // cursor から表示済みの did を取得
+  const watchedDids = [];
+  let cursorParam = url.searchParams.get("cursor");
+  if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
+    const dids = JSON.parse(cursorParam);
+    for (let i = 0; i < dids.length; i++) {
+      console.log(dids[i]);
+      watchedDids.push(dids[i]);
+    }
+  }
+
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
 
 
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
-
-
 
 
 
@@ -112,7 +118,9 @@ export async function getFeedSkeleton(request, env) {
     const likes = likedUserResults[ri].value.likes;
     for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
   }
-  
+
+  // ここで likedUserDidsSet から watchedDids の did を remove する
+
   const likedUserDids = Array.from(likedUserDidsSet)
     .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
 
@@ -131,7 +139,6 @@ export async function getFeedSkeleton(request, env) {
       // リプライとリポストを除外
       if (item.post === undefined || item.post.record === undefined) continue;
       if (item.reply !== undefined || item.reason !== undefined) continue;
-      console.log(Object.values(item));
       filterdPosts.push(item);
     }
     // いいねが多い順に表示
@@ -147,6 +154,7 @@ export async function getFeedSkeleton(request, env) {
   const feed = [];
   for (let item of items) {
     let feedItem = { post: item.post.uri };
+    console.log(Object.values(item.post));
     feed.push(feedItem);
   }
 
