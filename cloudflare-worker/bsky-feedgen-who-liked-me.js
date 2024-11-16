@@ -376,6 +376,9 @@ export async function getFeedSkeleton(request, env) {
     
     for (let pi = 0; pi < likedUserPostResults.length; pi++) {
       const post = feed[pi];
+
+      console.log(JSON.stringify(post));
+      
       items.push(post);
     }
   }
