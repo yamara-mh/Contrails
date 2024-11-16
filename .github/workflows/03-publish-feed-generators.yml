@@ -4,13 +4,21 @@ run-name: Publish Feed Generators
 on:
   workflow_dispatch:
     inputs:
+      target:
+        type: choice
+        description: Deploy target
+        options: 
+        - develop
+        - product
 
 env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  CLOUDFLARE_WORKER_NAME: ${{ vars.CLOUDFLARE_WORKER_NAME }}
   CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
   BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
   BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+
+  CLOUDFLARE_WORKER_NAME: ${{ vars.CLOUDFLARE_WORKER_NAME }}
+  CLOUDFLARE_WORKER_NAME_DEV: ${{ vars.CLOUDFLARE_WORKER_NAME_DEV }}
 
 jobs:
   publish_feed_generators:
@@ -19,6 +27,12 @@ jobs:
     steps:
       - name: Get Cloudflare Worker Subdomain
         run: |
+          TARGET=${{ github.event.inputs.target }}
+          if [ "$TARGET" = "product" ]; then
+            WORKER_NAME=${{ env.CLOUDFLARE_WORKER_NAME }}
+          else
+            WORKER_NAME=${{ env.CLOUDFLARE_WORKER_NAME_DEV }}
+          fi
           set -o pipefail;
           tmp=$(mktemp);
           curl -f \
@@ -28,7 +42,7 @@ jobs:
               --header 'Authorization: Bearer ${{ env.CLOUDFLARE_API_TOKEN }}' \
               | jq -r '.result.subdomain' > $tmp
           export CLOUDFLARE_WORKERS_SUBDOMAIN="$(cat $tmp)"
-          echo "FEEDGEN_HOSTNAME=${CLOUDFLARE_WORKER_NAME}.${CLOUDFLARE_WORKERS_SUBDOMAIN}.workers.dev" >> "$GITHUB_ENV"
+          echo "FEEDGEN_HOSTNAME=$WORKER_NAME.${CLOUDFLARE_WORKERS_SUBDOMAIN}.workers.dev" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Render Config
         run: |
