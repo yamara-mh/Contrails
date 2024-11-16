@@ -6,10 +6,10 @@ import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
 
 const GET_LATEST_MY_POSTS = 50;
-const GET_LIKES_MY_POSTS = 3; // 10
+const GET_LIKES_MY_POSTS = 5; // 10
 const GET_LIKES_USER = 50;
 const GET_LIKED_USER_LIMIT = 5; // 20
-const GET_LIKED_USER_POSTS = 20;
+const GET_LIKED_USER_POSTS = 50;
 const GET_USER_POSTS = 3;
 
 const DEFAULT_LIMIT = 20;
@@ -355,13 +355,9 @@ export async function getFeedSkeleton(request, env) {
     const likes = likedUserResults[ri].value.likes;
     for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
   }
-
-  console.log(likedUserDidsSet.count);
   
   const likedUserDids = Array.from(likedUserDidsSet)
     .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
-
-    console.log(likedUserDids.length);
 
   // いいねした人のポストを取得
   const likedUserPostResults = await Promise.allSettled(
@@ -431,16 +427,13 @@ export async function getFeedSkeleton(request, env) {
   );
   // */
 
-  const feed = [];  
-  if (items.length > 0) feed.push(...items.map(i => { post: i.post.uri }));
-  /*
+  const feed = [];
   for (let item of items) {
     let feedItem = { post: item.post.uri };
     feed.push(feedItem);
   }
-  // */
 
-  console.log(JSON.stringify(feed));
+  // console.log(JSON.stringify(feed));
   
   // let cursor = saveCursor(items, 1);
   return jsonResponse({ feed: feed }); // , cursor: cursor
