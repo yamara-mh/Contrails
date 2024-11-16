@@ -360,7 +360,7 @@ export async function getFeedSkeleton(request, env) {
   let feed = [];
   for (let item of items) {
     let postReason = item.postReason;
-    let feedItem = { post: items[0].atURL };
+    let feedItem = { post: item.atURL };
     if (postReason !== null) {
       // TODO add feedItem["reason"]
     }
