@@ -370,7 +370,8 @@ export async function getFeedSkeleton(request, env) {
   let cursor = saveCursor(items, numQueries);
 
   console.log(JSON.stringify(feed));
-  console.log(JSON.stringify(cursor));
+  console.log(numQueries);
+  console.log(cursor);
   
   return jsonResponse({ feed: feed, cursor: cursor });
 }
