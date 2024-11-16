@@ -332,11 +332,11 @@ export async function getFeedSkeleton(request, env) {
     return jsonResponse({ feed: null, cursor: "" });
   }
 
-  // リプライとリポスト、いいね0を除外
-  let filteredPosts = [];
+  const filteredPosts = [];
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx];
+    // リプライとリポスト、いいね0を除外
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
     if (item.post.likeCount == 0) continue;
@@ -366,22 +366,28 @@ export async function getFeedSkeleton(request, env) {
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.map(item => fetchUser(accessJwt, item, GET_LIKED_USER_POSTS, true)));
 
-  console.log(likedUserPostResults.length);
-
-  let items = [];
+  const items = [];
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
-    // console.log(Object.values(likedUserPostResults[ri]));
     if (likedUserPostResults[ri].status === "rejected") continue;
+
     const feed = likedUserPostResults[ri].value.feed;
-    console.log(`feed.length ${ feed.length }`);
-    
+    let filterdPosts = [];
     for (let pi = 0; pi < feed.length; pi++) {
-      console.log(`post ${JSON.stringify(feed[pi].post)}`);
-      items.push(feed[pi].post);
+      const item = feed[pi];
+      // リプライとリポストを除外
+      if (item.post === undefined || item.post.record === undefined) continue;
+      if (item.reply !== undefined || item.reason !== undefined) continue;
+      filterdPosts.push(item);
     }
+    
+    filterdPosts = filterdPosts
+      .toSorted((b, a) => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
+
+    const sliceCount = min(GET_USER_POSTS, filterdPosts.length);
+    if (sliceCount > 0) items.push(...filterdPosts.slice(0, sliceCount));
   }
 
-  // cursor 見た人の did を列挙して持たせ、次の読み込みで除外すれば良さそう
+  // cursor に見た人の did を持たせ、次の読み込みで除外すれば良さそう
 
   console.log("allSettled");
 
@@ -427,16 +433,8 @@ export async function getFeedSkeleton(request, env) {
   );
   // */
 
-  let feed = [];
-  for (let item of items) {
-    let postReason = item.postReason;
-    let feedItem = { post: item.uri };
-    console.log(feedItem);
-    if (postReason !== null) {
-      // TODO add feedItem["reason"]
-    }
-    feed.push(feedItem);
-  }
+  const feed = [];
+  if (items.length > 0) feed.push(...items.map(i => i.uri));
 
   console.log(JSON.stringify(feed));
   
