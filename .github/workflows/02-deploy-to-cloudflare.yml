@@ -35,10 +35,10 @@ jobs:
       - name: Populate wrangler.toml
         run: |
           TARGET=${{ github.event.inputs.target }}
-          if [ "$TARGET" = "develop" ]; then
-            WORKER_NAME=${{ env.CLOUDFLARE_DEV_WORKER_NAME }}
-          else
+          if [ "$TARGET" = "product" ]; then
             WORKER_NAME=${{ env.CLOUDFLARE_WORKER_NAME }}
+          else
+            WORKER_NAME=${{ env.CLOUDFLARE_DEV_WORKER_NAME }}
           fi
 
           >wrangler.toml
