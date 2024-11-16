@@ -6,6 +6,13 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Deploy target
+        options: 
+        - develop
+        - product
 
 env:
   BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
@@ -27,7 +34,10 @@ jobs:
       - name: Populate wrangler.toml
         run: |
           >wrangler.toml
-          echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\"" >>wrangler.toml
+          if [[ ${{ github.event.inputs.target }} == develop ]]; then
+            echo "name = \"${{ env.CLOUDFLARE_DEV_WORKER_NAME }}\"" >>wrangler.toml
+            else 
+            echo "name = \"${{ env.CLOUDFLARE_WORKER_NAME }}\"" >>wrangler.toml
           echo compatibility_date = \"2023-05-30\" >>wrangler.toml
           echo \[\[ d1_databases \]\] >>wrangler.toml
           echo binding = \"DB\"  >>wrangler.toml

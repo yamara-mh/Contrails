@@ -374,6 +374,7 @@ export async function getFeedSkeleton(request, env) {
       // リプライとリポストを除外
       if (item.post === undefined || item.post.record === undefined) continue;
       if (item.reply !== undefined || item.reason !== undefined) continue;
+      console.log(Object.values(item));
       filterdPosts.push(item);
     }
     // いいねが多い順に表示
