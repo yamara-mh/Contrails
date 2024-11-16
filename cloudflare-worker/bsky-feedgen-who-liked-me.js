@@ -39,6 +39,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
+  /*
   let words = feedAtUrl.split("/");
   let feedId = words[words.length - 1];
   let config = CONFIGS[feedId];
@@ -50,6 +51,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     console.warn(`Feed ID ${feedId} is not enabled`);
     return feedJsonResponse([]);
   }
+  */
 
 
 
@@ -60,7 +62,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
     const dids = JSON.parse(cursorParam);
     for (let i = 0; i < dids.length; i++) {
-      console.log(dids[i]);
+      console.log(`cursor ${dids[i]}`);
       watchedDids.push(dids[i]);
     }
   }
