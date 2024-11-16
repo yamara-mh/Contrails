@@ -156,7 +156,6 @@ export async function getFeedSkeleton(request, env, ctx) {
   const feed = [];
   for (let item of items) {
     let feedItem = { post: item.post.uri };
-    console.log(Object.values(item.post));
     feed.push(feedItem);
   }
 
@@ -165,7 +164,8 @@ export async function getFeedSkeleton(request, env, ctx) {
   // let cursor = saveCursor(items, 1);
   console.log(JSON.stringify(likedUserDids));
   
-  return jsonResponse({ feed: feed, cursor: JSON.stringify(likedUserDids) });
+  const cursor = null; // JSON.stringify(likedUserDids);
+  return jsonResponse({ feed: feed, cursor: cursor });
 }
 
 async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null) {
