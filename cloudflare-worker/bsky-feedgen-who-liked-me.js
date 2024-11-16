@@ -165,7 +165,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // let cursor = saveCursor(items, 1);
   console.log(JSON.stringify(likedUserDids));
   
-  return jsonResponse({ feed: feed, cursor: JSON.stringify(likedUserDids) }); // , cursor: cursor
+  return jsonResponse({ feed: feed, cursor: JSON.stringify(likedUserDids) });
 }
 
 async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null) {
