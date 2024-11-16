@@ -314,7 +314,6 @@ export async function getFeedSkeleton(request, env) {
   // ユーザの通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
   // サーバがユーザの通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
 
-  console.log("getFeedSkeleton");
   const myAccessJwt = request.headers.get("Authorization");
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
@@ -360,8 +359,6 @@ export async function getFeedSkeleton(request, env) {
   const likedUserDids = Array.from(likedUserDidsSet)
     .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
 
-  console.log(`likedUserDids : \n ${Object.values(likedUserDids)}`);
-
   // いいねした人のポストを取得
   const likedUserPostResults = await Promise.allSettled(
     likedUserDids.map(item => fetchUser(accessJwt, item, GET_LIKED_USER_POSTS, true)));
@@ -388,9 +385,6 @@ export async function getFeedSkeleton(request, env) {
   }
 
   // cursor に見た人の did を持たせ、次の読み込みで除外すれば良さそう
-
-  console.log("allSettled");
-
 
 /*
   for (let queryIdx = 0; queryIdx < numQueries; queryIdx++) {
