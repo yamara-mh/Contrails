@@ -383,6 +383,8 @@ export async function getFeedSkeleton(request, env) {
     }
   }
 
+  // cursor 見た人の did を列挙して持たせ、次の読み込みで除外すれば良さそう
+
   console.log("allSettled");
 
 
@@ -437,6 +439,8 @@ export async function getFeedSkeleton(request, env) {
     feed.push(feedItem);
   }
 
+  console.log(JSON.stringify(feed));
+  
   let cursor = saveCursor(items, 1);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
