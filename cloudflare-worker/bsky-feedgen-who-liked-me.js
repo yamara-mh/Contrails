@@ -10,7 +10,7 @@ const GET_LIKES_MY_POSTS = 3; // 10
 const GET_LIKES_USER = 50;
 const GET_LIKED_USER_LIMIT = 5; // 20
 const GET_LIKED_USER_POSTS = 10;
-const GET_USER_MEDIA_POSTS = 3;
+const GET_USER_POSTS = 3;
 
 const DEFAULT_LIMIT = 20;
 const QUOTED_PHRASE_REGEX = /"([^"]+)"/g;
@@ -295,9 +295,6 @@ export async function getFeedSkeleton(request, env) {
   }
 
   let allQueries = buildQueries(config.searchTerms, cursorParam);
-  let accessJwt = null;
-
-  accessJwt = await loginWithEnv(env);
 
   const numQueries = allQueries.length;
   let origCursor = loadCursor(cursorParam);
@@ -311,8 +308,8 @@ export async function getFeedSkeleton(request, env) {
   console.log(["origCursor", origCursor]);
   
 
-
-
+  let accessJwt = null;
+  accessJwt = await loginWithEnv(env);
 
 
 
@@ -335,7 +332,7 @@ export async function getFeedSkeleton(request, env) {
 
   if (myFeed.length == 0) {
     console.log("No posts");
-    return jsonResponse({ feed: null, cursor: null });
+    return jsonResponse({ feed: null, cursor: "" });
   }
 
   // リプライとリポスト、いいね0を除外
@@ -440,8 +437,8 @@ export async function getFeedSkeleton(request, env) {
     feed.push(feedItem);
   }
 
-  let cursor = saveCursor(items, numQueries);
-  return jsonResponse({ feed: feed, cursor: cursor });
+  // let cursor = saveCursor(items, numQueries);
+  return jsonResponse({ feed: feed, cursor: "" });
 }
 
 function loadCursor(cursorParam) {

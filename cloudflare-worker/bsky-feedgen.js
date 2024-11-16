@@ -255,6 +255,11 @@ export async function getFeedSkeleton(request, env) {
     return feedJsonResponse([]);
   }
   let cursorParam = url.searchParams.get("cursor");
+
+  
+  console.log(["cursor", cursorParam, Object.values(cursorParam)]);
+
+
   if (
     cursorParam === undefined ||
     cursorParam === null ||
@@ -367,6 +372,11 @@ export async function getFeedSkeleton(request, env) {
   }
 
   let cursor = saveCursor(items, numQueries);
+
+
+  console.log(["cursor", cursor, Object.values(cursor)]);
+
+
   return jsonResponse({ feed: feed, cursor: cursor });
 }
 
