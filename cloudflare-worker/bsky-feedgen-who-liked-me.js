@@ -149,6 +149,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
         if (item.post.likeCount <= sortedLikeCounts[li]) continue;
         for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[i] = sortedLikeCounts[i - 1];
         sortedLikeCounts[li] = item.post.likeCount;
+        console.log(item.post.likeCount);
       }
     }
     console.log(sortedLikeCounts[0]);
