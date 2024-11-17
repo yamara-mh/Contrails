@@ -45,6 +45,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   console.log(Object.values(request));
   console.log(Object.entries(request));
   console.log(Object.getOwnPropertyNames(request));
+  console.log(Object.getOwnPropertySymbols(request));
   console.log(JSON.stringify(request));
   
 
@@ -128,11 +129,12 @@ export async function getFeedSkeleton(request, env, ctx) {
     likedUserDids.map(item => fetchUser(accessJwt, item, LIKED_USER_POSTS_LIMIT, true)));
 
   const items = [];
+  const nowTime = Date.now();
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
     if (likedUserPostResults[ri].status === "rejected") continue;
 
     const feed = likedUserPostResults[ri].value.feed;
-    let filterdPosts = [];
+    let filterdItems = [];
     for (let pi = 0; pi < feed.length; pi++) {
       const item = feed[pi];
       // ミュートスレッドを除外
@@ -143,25 +145,29 @@ export async function getFeedSkeleton(request, env, ctx) {
       // 既にいいねした投稿を除外
       if (item.post.viewer.like !== undefined) continue;
       
-      filterdPosts.push(item);
+      filterdItems.push(item);
     }
     // いいねが多い順に表示
-    filterdPosts = filterdPosts
-      .toSorted((b, a) => {
+    filterdItems = Enumerable.from(filterdItems).orderBy(item => {
+        const elapsedTime = nowTime - new Date(item.record.createdAt);
+        return item.post.likeCount;
+    });
+
+    filterdItems = filterdItems.toSorted((b, a) => {
 
         // TODO 新しい投稿の評価を上げる　現在時間との差を出す
         
         a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1;
       });
 
-    const sliceCount = Math.min(CHOICE_USER_POSTS_COUNT, filterdPosts.length);
-    if (sliceCount > 0) items.push(...filterdPosts.slice(0, sliceCount));
+    const sliceCount = Math.min(CHOICE_USER_POSTS_COUNT, filterdItems.length);
+    if (sliceCount > 0) items.push(...filterdItems.slice(0, sliceCount));
   }
 
   const feed = [];
   for (let item of items) feed.push({ post: item.post.uri });
   
-  const cursor = JSON.stringify( {viewed_dids : likedUserDids } );
+  const cursor = "";// JSON.stringify( {viewed_dids : likedUserDids } );
   console.log(cursor);  
   return jsonResponse({ feed: feed, cursor: cursor });
 }
