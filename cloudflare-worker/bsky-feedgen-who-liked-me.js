@@ -54,7 +54,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // cursor に未閲覧ユーザがいたら表示
   const viewedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
-  console.log(JSON.stringify(cursorParam));
+  console.log(cursorParam);
   
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
     return await LoadUsersPosts(accessJwt, JSON.parse(cursorParam).viewed_dids);
@@ -190,7 +190,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     return jsonResponse({ feed: feed, cursor: `{ type: "e" }` });
   }
 
-  const cursor = JSON.parse({type: "s", viewed_dids : nextLoadArray, }); // JSON.stringify( { , viewed_dids : likedUserDids } );
+  const cursor = JSON.stringify({type: "s", viewed_dids: nextLoadArray }); // JSON.stringify( { , viewed_dids : likedUserDids } );
   console.log(cursor);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
