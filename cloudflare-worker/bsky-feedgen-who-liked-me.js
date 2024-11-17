@@ -118,6 +118,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   for (let ri = 0; ri < likedUserResults.length; ri++) {
     if (likedUserResults[ri].status === "rejected") continue;
     const likes = likedUserResults[ri].value.likes;
+    console.log(JSON.stringify(likedUserResults[ri].value));
     for (let li = 0; li < likes.length; li++) likedUserDidsSet.add(likes[li].actor.did);
   }
 
@@ -138,11 +139,13 @@ export async function getFeedSkeleton(request, env, ctx) {
     let filterdPosts = [];
     for (let pi = 0; pi < feed.length; pi++) {
       const item = feed[pi];
+      // ミュートを除外
+      if (item.post.viewer.threadMuted !== undefined) continue;
       // リプライとリポストを除外
       if (item.post === undefined || item.post.record === undefined) continue;
       if (item.reply !== undefined || item.reason !== undefined) continue;
-
-      console.log(JSON.stringify(item));
+      // 既にいいねした投稿を除外
+      if (item.post.viewer.like !== undefined) continue;
       
       filterdPosts.push(item);
     }
