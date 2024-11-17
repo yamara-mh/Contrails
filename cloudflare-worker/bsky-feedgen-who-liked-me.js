@@ -40,11 +40,10 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  const json_parse = JSON.parse(request.toString());
-  Object.keys(json_parse).forEach(function (key) {
-    console.log('key:', key);
-    console.log('json_parse:', json_parse.family);
-  });
+  console.log(request.url);
+  console.log(request.toString());
+  console.log(JSON.stringify(request));
+  
 
   // cursor から閲覧済みのユーザを取得
   const viewedDids = new Set();
