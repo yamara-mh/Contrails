@@ -5,7 +5,7 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
   let params = {
     actor: did,
     limit: limit,
-    possible_values: posts_no_replies,
+    possible_values: "posts_no_replies",
   };
   if (isLatest) params.sort = "latest";
   if (cursor !== undefined && cursor !== null) params.cursor = cursor;

@@ -71,8 +71,8 @@ export async function getFeedSkeleton(request, env, ctx) {
   setSafeMode(true);
 
 
-  console.log(JSON.stringify(request));
-  console.log(JSON.stringify(ctx));
+  console.log(Object.values(request));
+  console.log(Object.values(ctx));
   
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
