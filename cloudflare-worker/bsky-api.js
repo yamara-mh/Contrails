@@ -5,11 +5,12 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
   let params = {
     actor: did,
     limit: limit,
+    possible_values: posts_no_replies,
   };
+  if (isLatest) params.sort = "latest";
   if (cursor !== undefined && cursor !== null) params.cursor = cursor;
   
-  let url = "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" + new URLSearchParams(params);
-  if (isLatest) url += "&sort=latest";
+  const url = "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?" + new URLSearchParams(params);
 
   return await fetchGuarded(url, {
     headers: {
