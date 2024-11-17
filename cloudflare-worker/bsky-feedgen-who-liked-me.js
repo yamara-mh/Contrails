@@ -148,13 +148,11 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
       for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
         const likeCount = Number(item.likeCount);
         if (likeCount <= sortedLikeCounts[li]) continue;
-        for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[li] = sortedLikeCounts[li - 1];
+        for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[i] = sortedLikeCounts[i - 1];
         sortedLikeCounts[li] = likeCount;
       }
     }
     console.log(sortedLikeCounts[0]);
-    console.log(sortedLikeCounts[0].toString());
-    console.log((sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]).toString());
     
     const topAverageLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
     console.log(`topAverageLikeCount ${topAverageLikeCount}`);
@@ -187,10 +185,10 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
   const nextLoadArray = targetDids.slice(GET_USERS_ON_PAGE);
   if (nextLoadArray.length === 0) {
     console.log("empty");
-    return jsonResponse({ feed: feed, cursor: `{ type: "e" }` });
+    return jsonResponse({ feed: feed, cursor: ""}); // `{ type: "e" }` });
   }
 
-  const cursor = JSON.stringify({type: "s", viewed_dids: nextLoadArray }); // JSON.stringify( { , viewed_dids : likedUserDids } );
+  const cursor = ""; // JSON.stringify({type: "s", viewed_dids: nextLoadArray });
   console.log(cursor);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
