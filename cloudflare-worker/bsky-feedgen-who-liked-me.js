@@ -9,8 +9,9 @@ import Enumerable from 'linq';
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 5; // 10
 const GET_LIKES_USER = 5; // 50
-const SUM_LIKED_USERS = 5; // 20
-const LIKED_USER_POSTS_LIMIT = 30;
+const SUM_GET_USERS = 50; // 50
+const GET_USERS_ON_PAGE = 5; // 10
+const GET_USER_POSTS_LIMIT = 30;
 const CHOICE_USER_POSTS_COUNT = 3;
 
 export async function feedGeneratorWellKnown(request) {
@@ -47,21 +48,24 @@ export async function getFeedSkeleton(request, env, ctx) {
   console.log(Object.getOwnPropertyNames(ctx));
   console.log(Object.getOwnPropertySymbols(ctx));
   console.log(JSON.stringify(ctx));
-  
 
-  // cursor から閲覧済みのユーザを取得
-  const viewedDids = new Set();
-  let cursorParam = url.searchParams.get("cursor");
-  if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
-    const dids = JSON.parse(cursorParam).viewed_dids;
-    for (let i = 0; i < dids.length; i++) viewedDids.add(dids[i]);
-  }
 
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
   
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
+
+  
+
+  // cursor に未閲覧ユーザがいたら表示
+  const viewedDids = new Set();
+  let cursorParam = url.searchParams.get("cursor");
+  console.dir(cursorParam);
+  
+  if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
+    return await LoadUsersPosts(JSON.parse(cursorParam).viewed_dids);
+  }
 
 
 
@@ -117,15 +121,15 @@ export async function getFeedSkeleton(request, env, ctx) {
     }
   }
 
-  // 取得したユーザを全員見ていたら終了
-  if (likedUserDidsSet.count === 0) return jsonResponse({ feed: [], cursor: "" });
+  return LoadUsersPosts(Array.from(likedUserDidsSet).slice(0, SUM_GET_USERS));
+}
 
-  const likedUserDids = Array.from(likedUserDidsSet)
-    .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, SUM_LIKED_USERS);
+async function LoadUsersPosts(targetDids) {
+  const loadDids = targetDids.slice(0, GET_USERS_ON_PAGE);
 
   // いいねした人のポストを取得
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.map(item => fetchUser(accessJwt, item, LIKED_USER_POSTS_LIMIT, true)));
+    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, true)));
 
   const items = [];
   const nowTime = Date.now();
@@ -150,29 +154,32 @@ export async function getFeedSkeleton(request, env, ctx) {
 
       for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
         if (item.likeCount <= sortedLikeCounts[li]) continue;
+        sortedLikeCounts[li] = item.likeCount;
         for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[li] = sortedLikeCounts[li - 1];
       }
     }
 
-    const topAverageLikeCount = Enumerable.from(sortedLikeCounts).average(c => c);
+    const topAverageLikeCount = Math.max(1, sortedLikeCounts.reduce((acc, cur) => acc += cur)) / CHOICE_USER_POSTS_COUNT;
     console.log(`topAverageLikeCount ${topAverageLikeCount}`);
+
+    filterdItems.forEach(item => {
+      const elapsedTime = nowTime - new Date(item.record.createdAt);
+
+      console.log(elapsedTime);
+    });
     
 
     // いいねが多い順に表示
+    // TODO 新しい投稿の評価を上げる　現在時間との差を出す
     filterdItems = Enumerable.from(filterdItems).orderBy(item => {
         const elapsedTime = nowTime - new Date(item.record.createdAt);
-
-        console.log(elapsedTime);
-
         return item.post.likeCount;
     });
 
-    filterdItems = filterdItems.toSorted((b, a) => {
-
-        // TODO 新しい投稿の評価を上げる　現在時間との差を出す
-        
-        a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1;
-      });
+    /*
+    filterdItems = filterdItems.toSorted((b, a)
+    => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
+    */
 
     const sliceCount = Math.min(CHOICE_USER_POSTS_COUNT, filterdItems.length);
     if (sliceCount > 0) items.push(...filterdItems.slice(0, sliceCount));
@@ -180,14 +187,15 @@ export async function getFeedSkeleton(request, env, ctx) {
 
   const feed = [];
   for (let item of items) feed.push({ post: item.post.uri });
-  
 
-  // cursor に表示していないユーザの did を列挙して入れれば、API 呼び出し回数を減らせるかも
+  const nextLoadArray = targetDids.slice(GET_USERS_ON_PAGE);
+  if (nextLoadArray.length === 0) return jsonResponse({ feed: feed, cursor: `{ type: "e" }` }); 
 
-  const cursor = "";// JSON.stringify( {viewed_dids : likedUserDids } );
-  console.log(cursor);  
+  const cursor = JSON.stringify({type: "u", viewed_dids : nextLoadArray}); // JSON.stringify( { , viewed_dids : likedUserDids } );
+  console.log(cursor);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
+
 
 async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null) {
   let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor);
