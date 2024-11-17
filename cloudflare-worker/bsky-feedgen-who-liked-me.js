@@ -41,7 +41,10 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
 
   console.log(request.url);
-  console.log(request.toString());
+  console.log(Object.keys(request));
+  console.log(Object.values(request));
+  console.log(Object.entries(request));
+  console.log(Object.getOwnPropertyNames(request));
   console.log(JSON.stringify(request));
   
 
@@ -85,6 +88,8 @@ export async function getFeedSkeleton(request, env, ctx) {
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx];
+    console.log(JSON.stringify(item));
+    
     // リプライとリポスト、いいね0を除外
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
@@ -143,6 +148,9 @@ export async function getFeedSkeleton(request, env, ctx) {
     // いいねが多い順に表示
     filterdPosts = filterdPosts
       .toSorted((b, a) => {
+
+        // TODO 新しい投稿の評価を上げる　現在時間との差を出す
+        
         a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1;
       });
 
