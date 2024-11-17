@@ -13,7 +13,7 @@ const SUM_GET_USERS = 50; // 50
 const GET_USERS_ON_PAGE = 5; // 10
 const GET_USER_POSTS_LIMIT = 30;
 
-const LIKE_BOOST_PERIOD = 7;
+const LATEST_BONUS_PERIOD_SEC = 86400 * 7;
 const CHOICE_USER_POSTS_COUNT = 3;
 
 export async function feedGeneratorWellKnown(request) {
@@ -146,29 +146,34 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
       filterdItems.push(item);
 
       for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
-        const likeCount = Number(item.likeCount);
-        if (likeCount <= sortedLikeCounts[li]) continue;
+        if (item.post.likeCount <= sortedLikeCounts[li]) continue;
         for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[i] = sortedLikeCounts[i - 1];
-        sortedLikeCounts[li] = likeCount;
+        sortedLikeCounts[li] = item.post.likeCount;
       }
     }
     console.log(sortedLikeCounts[0]);
     
-    const topAverageLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
-    console.log(`topAverageLikeCount ${topAverageLikeCount}`);
+    const latestBonusLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
+    console.log(`topAverageLikeCount ${latestBonusLikeCount}`);
 
     filterdItems.forEach(item => {
-      const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds;
-      console.log(elapsedSec.toString());
+      const elapsedSec = nowTime - new Date(item.post.indexedAt);
+      console.log(elapsedSec);
+      console.log((new Date(elapsedSec).getSeconds).toString());
     });
     
 
     // いいねが多い順に表示
     // TODO 新しい投稿の評価を上げる　現在時間との差を出す
     filterdItems = Enumerable.from(filterdItems).orderBy(item => {
-        const elapsedTime = nowTime - new Date(item.post.indexedAt);
-        
-        return item.post.likeCount;
+      const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds;
+
+      let addLikeCount = 0;
+      if (elapsedSec < LATEST_BONUS_PERIOD_SEC) {
+        const rate = 1 - (LATEST_BONUS_PERIOD_SEC - elapsedSec) / LATEST_BONUS_PERIOD_SEC;
+        addLikeCount += rate * latestBonusLikeCount;
+      }
+      return item.post.likeCount + addLikeCount;
     }).take(CHOICE_USER_POSTS_COUNT);
 
     /*
