@@ -154,13 +154,11 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     }
 
     const latestBonusLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
-    console.log(`topAverageLikeCount ${latestBonusLikeCount}`);
 
     // いいねが多い順に表示
     // TODO 新しい投稿の評価を上げる　現在時間との差を出す
-    filterdItems = Enumerable.from(filterdItems).orderBy(item => {
-      const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds;
-      console.log(elapsedSec);
+    filterdItems = Enumerable.from(filterdItems).orderbydescending(item => {
+      const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds();
       
       let addLikeCount = 0;
       if (elapsedSec < LATEST_BONUS_PERIOD_SEC) {
