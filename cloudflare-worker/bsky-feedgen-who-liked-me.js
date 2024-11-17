@@ -149,29 +149,23 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
         if (item.post.likeCount <= sortedLikeCounts[li]) continue;
         for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[i] = sortedLikeCounts[i - 1];
         sortedLikeCounts[li] = item.post.likeCount;
-        console.log(item.post.likeCount);
+        break;
       }
     }
-    console.log(sortedLikeCounts[0]);
-    
+
     const latestBonusLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
     console.log(`topAverageLikeCount ${latestBonusLikeCount}`);
-
-    filterdItems.forEach(item => {
-      const elapsedSec = nowTime - new Date(item.post.indexedAt);
-      console.log(elapsedSec);
-      console.log((new Date(elapsedSec).getSeconds).toString());
-    });
-    
 
     // いいねが多い順に表示
     // TODO 新しい投稿の評価を上げる　現在時間との差を出す
     filterdItems = Enumerable.from(filterdItems).orderBy(item => {
       const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds;
-
+      console.log(elapsedSec);
+      
       let addLikeCount = 0;
       if (elapsedSec < LATEST_BONUS_PERIOD_SEC) {
         const rate = 1 - (LATEST_BONUS_PERIOD_SEC - elapsedSec) / LATEST_BONUS_PERIOD_SEC;
+        console.log(rate);
         addLikeCount += rate * latestBonusLikeCount;
       }
       return item.post.likeCount + addLikeCount;
@@ -184,6 +178,8 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
     items.push(...filterdItems);
   }
+
+
 
   const feed = [];
   for (let item of items) feed.push({ post: item.post.uri });
