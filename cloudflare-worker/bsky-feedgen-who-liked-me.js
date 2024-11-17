@@ -33,16 +33,16 @@ export async function feedGeneratorWellKnown(request) {
 }
 
 export async function getFeedSkeleton(request, env, ctx) {  
-
-  console.log(JSON.stringify(request));
-  console.log(JSON.stringify(ctx));
-
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
   if (feedAtUrl === null) {
     console.warn(`feed parameter missing from query string`);
     return feedJsonResponse([]);
   }
+
+  console.log(request);
+  console.log(ctx);
+  console.log(url);
 
   // cursor から閲覧済みのユーザを取得
   const watchedDids = new Set();
