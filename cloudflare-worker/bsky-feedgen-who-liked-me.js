@@ -54,7 +54,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // cursor に未閲覧ユーザがいたら表示
   const viewedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
-  console.dir(cursorParam);
+  console.log(JSON.stringify(cursorParam));
   
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
     return await LoadUsersPosts(accessJwt, JSON.parse(cursorParam).viewed_dids);
@@ -130,7 +130,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     if (likedUserPostResults[ri].status === "rejected") continue;
 
     let filterdItems = [];
-    let sortedLikeCounts = [1, 0, 0]; // CHOICE_USER_POSTS_COUNT
+    const sortedLikeCounts = [1, 0, 0]; // CHOICE_USER_POSTS_COUNT
 
     const feed = likedUserPostResults[ri].value.feed;
     for (let pi = 0; pi < feed.length; pi++) {
@@ -146,19 +146,22 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
       filterdItems.push(item);
 
       for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
-        if (item.likeCount <= sortedLikeCounts[li]) continue;
+        const likeCount = Number(item.likeCount);
+        if (likeCount <= sortedLikeCounts[li]) continue;
         for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[li] = sortedLikeCounts[li - 1];
-        sortedLikeCounts[li] = Number(item.likeCount);
+        sortedLikeCounts[li] = likeCount;
       }
     }
     console.log(sortedLikeCounts[0]);
+    console.log(sortedLikeCounts[0].toString());
+    console.log((sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]).toString());
     
     const topAverageLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
     console.log(`topAverageLikeCount ${topAverageLikeCount}`);
 
     filterdItems.forEach(item => {
       const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds;
-      console.log(elapsedSec);
+      console.log(elapsedSec.toString());
     });
     
 
@@ -187,7 +190,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     return jsonResponse({ feed: feed, cursor: `{ type: "e" }` });
   }
 
-  const cursor = JSON.stringify({type: "u", viewed_dids : nextLoadArray}); // JSON.stringify( { , viewed_dids : likedUserDids } );
+  const cursor = JSON.stringify({type: "s", viewed_dids : nextLoadArray}); // JSON.stringify( { , viewed_dids : likedUserDids } );
   console.log(cursor);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
