@@ -43,15 +43,6 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  console.log(ctx);
-  console.log(Object.keys(ctx));
-  console.log(Object.values(ctx));
-  console.log(Object.entries(ctx));
-  console.log(Object.getOwnPropertyNames(ctx));
-  console.log(Object.getOwnPropertySymbols(ctx));
-  console.log(JSON.stringify(ctx));
-
-
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
   
@@ -126,7 +117,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   return LoadUsersPosts(Array.from(likedUserDidsSet).slice(0, SUM_GET_USERS));
 }
 
-async function LoadUsersPosts(accessJwt, targetDids) {
+async function LoadUsersPosts(accessJwt, targetDids = []) {
   const loadDids = targetDids.slice(0, GET_USERS_ON_PAGE);
 
   // いいねした人のポストを取得
