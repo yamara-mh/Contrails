@@ -40,7 +40,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  const json_parse = JSON.parse(request);
+  const json_parse = JSON.parse(request.toString());
   Object.keys(json_parse).forEach(function (key) {
     console.log('key:', key);
     console.log('json_parse:', json_parse.family);
