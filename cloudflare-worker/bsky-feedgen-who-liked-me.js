@@ -114,7 +114,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     }
   }
 
-  return LoadUsersPosts(Array.from(likedUserDidsSet).slice(0, SUM_GET_USERS));
+  return LoadUsersPosts(accessJwt, Array.from(likedUserDidsSet).slice(0, SUM_GET_USERS));
 }
 
 async function LoadUsersPosts(accessJwt, targetDids = []) {
@@ -174,15 +174,17 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
     */
 
-    const sliceCount = Math.min(CHOICE_USER_POSTS_COUNT, filterdItems.length);
-    if (sliceCount > 0) items.push(...filterdItems.slice(0, sliceCount));
+    items.push(...filterdItems.slice(0, CHOICE_USER_POSTS_COUNT));
   }
 
   const feed = [];
   for (let item of items) feed.push({ post: item.post.uri });
 
   const nextLoadArray = targetDids.slice(GET_USERS_ON_PAGE);
-  if (nextLoadArray.length === 0) return jsonResponse({ feed: feed, cursor: `{ type: "e" }` }); 
+  if (nextLoadArray.length === 0) {
+    console.log("empty");
+    return jsonResponse({ feed: feed, cursor: `{ type: "e" }` });
+  }
 
   const cursor = JSON.stringify({type: "u", viewed_dids : nextLoadArray}); // JSON.stringify( { , viewed_dids : likedUserDids } );
   console.log(cursor);
