@@ -42,7 +42,7 @@ jobs:
               --header 'Authorization: Bearer ${{ env.CLOUDFLARE_API_TOKEN }}' \
               | jq -r '.result.subdomain' > $tmp
           export CLOUDFLARE_WORKERS_SUBDOMAIN="$(cat $tmp)"
-          echo "FEEDGEN_HOSTNAME={$WORKER_NAME}.${CLOUDFLARE_WORKERS_SUBDOMAIN}.workers.dev" >> "$GITHUB_ENV"
+          echo "FEEDGEN_HOSTNAME=$WORKER_NAME.${CLOUDFLARE_WORKERS_SUBDOMAIN}.workers.dev" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - name: Render Config
         run: |
