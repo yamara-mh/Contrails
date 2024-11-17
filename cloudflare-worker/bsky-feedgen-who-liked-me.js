@@ -40,8 +40,8 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  console.log(request);
-  console.log(ctx);
+  console.log(Object.keys(request));
+  console.log(Object.keys(ctx));
   console.log(url);
 
   // cursor から閲覧済みのユーザを取得
