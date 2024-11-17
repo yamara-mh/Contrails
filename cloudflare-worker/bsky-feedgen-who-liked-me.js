@@ -9,9 +9,9 @@ import Enumerable from 'linq';
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 5; // 10
 const GET_LIKES_USER = 5; // 50
-const GET_LIKED_USER_LIMIT = 10; // 20
-const GET_LIKED_USER_POSTS = 30;
-const GET_USER_POSTS = 3;
+const SUM_LIKED_USERS = 5; // 20
+const LIKED_USER_POSTS_LIMIT = 30;
+const CHOICE_USER_POSTS_COUNT = 3;
 
 export async function feedGeneratorWellKnown(request) {
   let host = request.headers.get("Host");
@@ -40,15 +40,18 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  console.dir(Object.keys(request));
-  console.dir(Object.keys(ctx));
+  const json_parse = JSON.parse(request);
+  Object.keys(json_parse).forEach(function (key) {
+    console.log('key:', key);
+    console.log('json_parse:', json_parse.family);
+  });
 
   // cursor から閲覧済みのユーザを取得
-  const watchedDids = new Set();
+  const viewedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
-    const dids = JSON.parse(cursorParam);
-    for (let i = 0; i < dids.length; i++) watchedDids.add(dids[i]);
+    const dids = JSON.parse(cursorParam).viewed_dids;
+    for (let i = 0; i < dids.length; i++) viewedDids.add(dids[i]);
   }
 
   resetFetchCount(); // for long-lived processes (local)
@@ -103,7 +106,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     const likes = likedUserResults[ri].value.likes;
     for (let li = 0; li < likes.length; li++) {
       // 閲覧済みのユーザを除外
-      if (watchedDids.has(likes[li].actor.did)) continue;
+      if (viewedDids.has(likes[li].actor.did)) continue;
       // ミュートを除外
       if (likes[li].actor.viewer.muted === true) continue;
       likedUserDidsSet.add(likes[li].actor.did);
@@ -114,11 +117,11 @@ export async function getFeedSkeleton(request, env, ctx) {
   if (likedUserDidsSet.count === 0) return jsonResponse({ feed: [], cursor: "" });
 
   const likedUserDids = Array.from(likedUserDidsSet)
-    .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
+    .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, SUM_LIKED_USERS);
 
   // いいねした人のポストを取得
   const likedUserPostResults = await Promise.allSettled(
-    likedUserDids.map(item => fetchUser(accessJwt, item, GET_LIKED_USER_POSTS, true)));
+    likedUserDids.map(item => fetchUser(accessJwt, item, LIKED_USER_POSTS_LIMIT, true)));
 
   const items = [];
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
@@ -144,24 +147,14 @@ export async function getFeedSkeleton(request, env, ctx) {
         a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1;
       });
 
-    const sliceCount = Math.min(GET_USER_POSTS, filterdPosts.length);
+    const sliceCount = Math.min(CHOICE_USER_POSTS_COUNT, filterdPosts.length);
     if (sliceCount > 0) items.push(...filterdPosts.slice(0, sliceCount));
   }
 
-  // cursor に見た人の did を持たせ、次の読み込みで除外すれば良さそう
-
   const feed = [];
-  for (let item of items) {
-    let feedItem = { post: item.post.uri };
-    feed.push(feedItem);
-  }
-
-  // console.log(JSON.stringify(feed));
+  for (let item of items) feed.push({ post: item.post.uri });
   
-  // let cursor = saveCursor(items, 1);
-  // console.log(JSON.stringify(likedUserDids));
-  
-  const cursor = JSON.stringify(likedUserDids);
+  const cursor = JSON.stringify( {viewed_dids : likedUserDids } );
   console.log(cursor);  
   return jsonResponse({ feed: feed, cursor: cursor });
 }
