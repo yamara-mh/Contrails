@@ -40,13 +40,13 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  console.log(request.url);
-  console.log(Object.keys(request));
-  console.log(Object.values(request));
-  console.log(Object.entries(request));
-  console.log(Object.getOwnPropertyNames(request));
-  console.log(Object.getOwnPropertySymbols(request));
-  console.log(JSON.stringify(request));
+  console.log(ctx);
+  console.log(Object.keys(ctx));
+  console.log(Object.values(ctx));
+  console.log(Object.entries(ctx));
+  console.log(Object.getOwnPropertyNames(ctx));
+  console.log(Object.getOwnPropertySymbols(ctx));
+  console.log(JSON.stringify(ctx));
   
 
   // cursor から閲覧済みのユーザを取得
@@ -89,8 +89,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx];
-    console.log(JSON.stringify(item));
-    
+
     // リプライとリポスト、いいね0を除外
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
@@ -133,8 +132,10 @@ export async function getFeedSkeleton(request, env, ctx) {
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
     if (likedUserPostResults[ri].status === "rejected") continue;
 
-    const feed = likedUserPostResults[ri].value.feed;
     let filterdItems = [];
+    let sortedLikeCounts = [0, 0, 0]; // CHOICE_USER_POSTS_COUNT
+
+    const feed = likedUserPostResults[ri].value.feed;
     for (let pi = 0; pi < feed.length; pi++) {
       const item = feed[pi];
       // ミュートスレッドを除外
@@ -146,10 +147,23 @@ export async function getFeedSkeleton(request, env, ctx) {
       if (item.post.viewer.like !== undefined) continue;
       
       filterdItems.push(item);
+
+      for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
+        if (item.likeCount <= sortedLikeCounts[li]) continue;
+        for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[li] = sortedLikeCounts[li - 1];
+      }
     }
+
+    const topAverageLikeCount = Enumerable.from(sortedLikeCounts).average(c => c);
+    console.log(`topAverageLikeCount ${topAverageLikeCount}`);
+    
+
     // いいねが多い順に表示
     filterdItems = Enumerable.from(filterdItems).orderBy(item => {
         const elapsedTime = nowTime - new Date(item.record.createdAt);
+
+        console.log(elapsedTime);
+
         return item.post.likeCount;
     });
 
@@ -167,6 +181,9 @@ export async function getFeedSkeleton(request, env, ctx) {
   const feed = [];
   for (let item of items) feed.push({ post: item.post.uri });
   
+
+  // cursor に表示していないユーザの did を列挙して入れれば、API 呼び出し回数を減らせるかも
+
   const cursor = "";// JSON.stringify( {viewed_dids : likedUserDids } );
   console.log(cursor);  
   return jsonResponse({ feed: feed, cursor: cursor });
