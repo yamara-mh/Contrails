@@ -148,7 +148,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
       for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
         if (item.likeCount <= sortedLikeCounts[li]) continue;
         for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[li] = sortedLikeCounts[li - 1];
-        sortedLikeCounts[li] = item.likeCount;
+        sortedLikeCounts[li] = Number(item.likeCount);
       }
     }
 
@@ -156,7 +156,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     console.log(`topAverageLikeCount ${topAverageLikeCount}`);
 
     filterdItems.forEach(item => {
-      const elapsedTime = nowTime - new Date(item.post.record.createdAt);
+      const elapsedTime = nowTime - new Date(item.post.indexedAt);
       console.log(elapsedTime);
     });
     
@@ -164,7 +164,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     // いいねが多い順に表示
     // TODO 新しい投稿の評価を上げる　現在時間との差を出す
     filterdItems = Enumerable.from(filterdItems).orderBy(item => {
-        const elapsedTime = nowTime - new Date(item.post.record.createdAt);
+        const elapsedTime = nowTime - new Date(item.post.indexedAt);
         
         return item.post.likeCount;
     });
