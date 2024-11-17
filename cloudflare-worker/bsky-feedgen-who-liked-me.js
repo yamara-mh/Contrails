@@ -151,13 +151,14 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
         sortedLikeCounts[li] = Number(item.likeCount);
       }
     }
-
+    console.log(sortedLikeCounts[0]);
+    
     const topAverageLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
     console.log(`topAverageLikeCount ${topAverageLikeCount}`);
 
     filterdItems.forEach(item => {
-      const elapsedTime = nowTime - new Date(item.post.indexedAt);
-      console.log(elapsedTime);
+      const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds;
+      console.log(elapsedSec);
     });
     
 
@@ -167,14 +168,14 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
         const elapsedTime = nowTime - new Date(item.post.indexedAt);
         
         return item.post.likeCount;
-    });
+    }).take(CHOICE_USER_POSTS_COUNT);
 
     /*
     filterdItems = filterdItems.toSorted((b, a)
     => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
     */
 
-    items.push(...filterdItems.slice(0, CHOICE_USER_POSTS_COUNT));
+    items.push(...filterdItems);
   }
 
   const feed = [];
