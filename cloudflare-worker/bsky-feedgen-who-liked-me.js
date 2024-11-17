@@ -157,7 +157,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
     // いいねが多い順に表示
     // TODO 新しい投稿の評価を上げる　現在時間との差を出す
-    filterdItems = Enumerable.from(filterdItems).orderbydescending(item => {
+    filterdItems = Enumerable.from(filterdItems).orderByDescending(item => {
       const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds();
       
       let addLikeCount = 0;
