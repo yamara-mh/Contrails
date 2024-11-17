@@ -24,4 +24,4 @@ jobs:
         with:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           command: |
-            d1 execute contrails-auth  --file=./cloudflare-worker/schema.sql --remote
+            d1 execute auth  --file=./cloudflare-worker/schema.sql --remote
