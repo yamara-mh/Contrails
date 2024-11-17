@@ -12,6 +12,8 @@ const GET_LIKES_USER = 5; // 50
 const SUM_GET_USERS = 50; // 50
 const GET_USERS_ON_PAGE = 5; // 10
 const GET_USER_POSTS_LIMIT = 30;
+
+const LIKE_BOOST_PERIOD = 7;
 const CHOICE_USER_POSTS_COUNT = 3;
 
 export async function feedGeneratorWellKnown(request) {
@@ -64,7 +66,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   console.dir(cursorParam);
   
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
-    return await LoadUsersPosts(JSON.parse(cursorParam).viewed_dids);
+    return await LoadUsersPosts(accessJwt, JSON.parse(cursorParam).viewed_dids);
   }
 
 
@@ -124,7 +126,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   return LoadUsersPosts(Array.from(likedUserDidsSet).slice(0, SUM_GET_USERS));
 }
 
-async function LoadUsersPosts(targetDids) {
+async function LoadUsersPosts(accessJwt, targetDids) {
   const loadDids = targetDids.slice(0, GET_USERS_ON_PAGE);
 
   // いいねした人のポストを取得
@@ -164,7 +166,6 @@ async function LoadUsersPosts(targetDids) {
 
     filterdItems.forEach(item => {
       const elapsedTime = nowTime - new Date(item.record.createdAt);
-
       console.log(elapsedTime);
     });
     
@@ -173,6 +174,7 @@ async function LoadUsersPosts(targetDids) {
     // TODO 新しい投稿の評価を上げる　現在時間との差を出す
     filterdItems = Enumerable.from(filterdItems).orderBy(item => {
         const elapsedTime = nowTime - new Date(item.record.createdAt);
+        
         return item.post.likeCount;
     });
 
