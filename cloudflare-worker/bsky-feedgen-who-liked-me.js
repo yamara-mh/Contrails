@@ -4,11 +4,12 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
+import Enumerable from 'linq';
 
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 5; // 10
-const GET_LIKES_USER = 50;
-const GET_LIKED_USER_LIMIT = 5; // 20
+const GET_LIKES_USER = 5; // 50
+const GET_LIKED_USER_LIMIT = 10; // 20
 const GET_LIKED_USER_POSTS = 30;
 const GET_USER_POSTS = 3;
 
@@ -32,6 +33,10 @@ export async function feedGeneratorWellKnown(request) {
 }
 
 export async function getFeedSkeleton(request, env, ctx) {  
+
+  console.log(JSON.stringify(request));
+  console.log(JSON.stringify(ctx));
+
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
   if (feedAtUrl === null) {
@@ -49,10 +54,6 @@ export async function getFeedSkeleton(request, env, ctx) {
 
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
-
-
-  console.log(Object.keys(request));
-  console.log(Object.keys(ctx));
   
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
@@ -110,7 +111,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     }
   }
 
-  // 全員見たら終了
+  // 取得したユーザを全員見ていたら終了
   if (likedUserDidsSet.count === 0) return jsonResponse({ feed: [], cursor: "" });
 
   const likedUserDids = Array.from(likedUserDidsSet)
@@ -161,7 +162,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // let cursor = saveCursor(items, 1);
   // console.log(JSON.stringify(likedUserDids));
   
-  const cursor = ""; // JSON.stringify(likedUserDids);
+  const cursor = JSON.stringify(likedUserDids);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
 
