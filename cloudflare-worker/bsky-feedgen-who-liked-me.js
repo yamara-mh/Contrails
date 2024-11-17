@@ -141,6 +141,9 @@ export async function getFeedSkeleton(request, env, ctx) {
       // リプライとリポストを除外
       if (item.post === undefined || item.post.record === undefined) continue;
       if (item.reply !== undefined || item.reason !== undefined) continue;
+
+      console.log(JSON.stringify(item));
+      
       filterdPosts.push(item);
     }
     // いいねが多い順に表示
@@ -162,7 +165,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // console.log(JSON.stringify(feed));
   
   // let cursor = saveCursor(items, 1);
-  console.log(JSON.stringify(likedUserDids));
+  // console.log(JSON.stringify(likedUserDids));
   
   const cursor = ""; // JSON.stringify(likedUserDids);
   return jsonResponse({ feed: feed, cursor: cursor });
