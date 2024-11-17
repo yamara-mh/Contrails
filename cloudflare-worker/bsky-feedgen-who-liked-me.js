@@ -40,9 +40,8 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  console.log(Object.keys(request));
-  console.log(Object.keys(ctx));
-  console.log(url);
+  console.dir(Object.keys(request));
+  console.dir(Object.keys(ctx));
 
   // cursor から閲覧済みのユーザを取得
   const watchedDids = new Set();
@@ -163,6 +162,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // console.log(JSON.stringify(likedUserDids));
   
   const cursor = JSON.stringify(likedUserDids);
+  console.log(cursor);  
   return jsonResponse({ feed: feed, cursor: cursor });
 }
 
