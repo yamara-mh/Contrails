@@ -190,7 +190,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     return jsonResponse({ feed: feed, cursor: `{ type: "e" }` });
   }
 
-  const cursor = JSON.stringify({type: "s", viewed_dids : nextLoadArray}); // JSON.stringify( { , viewed_dids : likedUserDids } );
+  const cursor = JSON.parse({type: "s", viewed_dids : nextLoadArray, }); // JSON.stringify( { , viewed_dids : likedUserDids } );
   console.log(cursor);
   return jsonResponse({ feed: feed, cursor: cursor });
 }
