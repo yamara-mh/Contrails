@@ -9,7 +9,7 @@ const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 5; // 10
 const GET_LIKES_USER = 50;
 const GET_LIKED_USER_LIMIT = 5; // 20
-const GET_LIKED_USER_POSTS = 50;
+const GET_LIKED_USER_POSTS = 30;
 const GET_USER_POSTS = 3;
 
 export async function feedGeneratorWellKnown(request) {
@@ -39,48 +39,28 @@ export async function getFeedSkeleton(request, env, ctx) {
     return feedJsonResponse([]);
   }
 
-  /*
-  let words = feedAtUrl.split("/");
-  let feedId = words[words.length - 1];
-  let config = CONFIGS[feedId];
-  if (config === undefined) {
-    console.warn(`Could not find Feed ID ${feedId}`);
-    return feedJsonResponse([]);
-  }
-  if (config.isEnabled !== true) {
-    console.warn(`Feed ID ${feedId} is not enabled`);
-    return feedJsonResponse([]);
-  }
-  */
-
-
-
-
-  // cursor から表示済みの did を取得
-  const watchedDids = [];
+  // cursor から閲覧済みのユーザを取得
+  const watchedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
     const dids = JSON.parse(cursorParam);
-    for (let i = 0; i < dids.length; i++) {
-      console.log(`cursor ${dids[i]}`);
-      watchedDids.push(dids[i]);
-    }
+    for (let i = 0; i < dids.length; i++) watchedDids.add(dids[i]);
   }
 
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
 
 
-  console.log(Object.values(request));
-  console.log(Object.values(ctx));
+  console.log(Object.keys(request));
+  console.log(Object.keys(ctx));
   
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
 
 
 
-  // ユーザの通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
-  // サーバがユーザの通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
+  // 閲覧者の通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
+  // サーバが閲覧者の通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
 
   const myAccessJwt = request.headers.get("Authorization");
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
@@ -113,7 +93,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
   
-  // いいねした人を取得
+  // いいねしたユーザを取得
   const likedUserResults = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
@@ -122,13 +102,16 @@ export async function getFeedSkeleton(request, env, ctx) {
     if (likedUserResults[ri].status === "rejected") continue;
     const likes = likedUserResults[ri].value.likes;
     for (let li = 0; li < likes.length; li++) {
+      // 閲覧済みのユーザを除外
+      if (watchedDids.has(likes[li].actor.did)) continue;
       // ミュートを除外
       if (likes[li].actor.viewer.muted === true) continue;
       likedUserDidsSet.add(likes[li].actor.did);
     }
   }
 
-  // ここで likedUserDidsSet から watchedDids の did を remove する
+  // 全員見たら終了
+  if (likedUserDidsSet.count === 0) return jsonResponse({ feed: [], cursor: "" });
 
   const likedUserDids = Array.from(likedUserDidsSet)
     .slice(0/* cursor で何人目まで表示したか記録できたら便利 */, GET_LIKED_USER_LIMIT);
@@ -157,7 +140,9 @@ export async function getFeedSkeleton(request, env, ctx) {
     }
     // いいねが多い順に表示
     filterdPosts = filterdPosts
-      .toSorted((b, a) => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
+      .toSorted((b, a) => {
+        a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1;
+      });
 
     const sliceCount = Math.min(GET_USER_POSTS, filterdPosts.length);
     if (sliceCount > 0) items.push(...filterdPosts.slice(0, sliceCount));
