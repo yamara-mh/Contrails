@@ -147,13 +147,9 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
   for (let item of items) feed.push({ post: item.post.uri });
 
   const nextLoadArray = targetDids.slice(GET_USERS_ON_PAGE);
-  if (nextLoadArray.length === 0) {
-    console.log("empty");
-    return jsonResponse({ feed: feed, cursor: ""});
-  }
+  if (nextLoadArray.length === 0) return jsonResponse({ feed: feed, cursor: ""});
 
-  const cursor = JSON.stringify({type: "s", viewed_dids: nextLoadArray });
-  return jsonResponse({ feed: feed, cursor: cursor });
+  return jsonResponse({ feed: feed, cursor: JSON.stringify({ viewed_dids: nextLoadArray }) });
 }
 
 
