@@ -4,13 +4,12 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
-import Enumerable from 'linq';
 
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 5; // 10
 const GET_LIKES_USER = 5; // 50
 const SUM_GET_USERS = 50; // 50
-const GET_USERS_ON_PAGE = 5; // 10
+const GET_USERS_ON_PAGE = 10; // 10
 const GET_USER_POSTS_LIMIT = 30;
 
 const LATEST_BONUS_PERIOD_SEC = 86400 * 7;
@@ -48,8 +47,6 @@ export async function getFeedSkeleton(request, env, ctx) {
   
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
-
-  
 
   // cursor に未閲覧ユーザがいたら表示
   const viewedDids = new Set();
@@ -122,16 +119,13 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
   // いいねした人のポストを取得
   const likedUserPostResults = await Promise.allSettled(
-    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, true)));
+    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, false)));
 
   const items = [];
-  const nowTime = Date.now();
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
     if (likedUserPostResults[ri].status === "rejected") continue;
 
-    let filterdItems = [];
-    const sortedLikeCounts = [1, 0, 0]; // CHOICE_USER_POSTS_COUNT
-
+    let pushCount = 0;
     const feed = likedUserPostResults[ri].value.feed;
     for (let pi = 0; pi < feed.length; pi++) {
       const item = feed[pi];
@@ -143,41 +137,10 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
       // 既にいいねした投稿を除外
       if (item.post.viewer.like !== undefined) continue;
       
-      filterdItems.push(item);
-
-      for (let li = 0; li < CHOICE_USER_POSTS_COUNT; li++) {
-        if (item.post.likeCount <= sortedLikeCounts[li]) continue;
-        for (let i = CHOICE_USER_POSTS_COUNT - 1; i > li; i--) sortedLikeCounts[i] = sortedLikeCounts[i - 1];
-        sortedLikeCounts[li] = item.post.likeCount;
-        break;
-      }
+      items.push(item);
+      if (++pushCount == CHOICE_USER_POSTS_COUNT) break;
     }
-
-    const latestBonusLikeCount = (sortedLikeCounts[0] + sortedLikeCounts[1] + sortedLikeCounts[2]) / CHOICE_USER_POSTS_COUNT;
-
-    // いいねが多い順に表示
-    // TODO 新しい投稿の評価を上げる　現在時間との差を出す
-    filterdItems = Enumerable.from(filterdItems).orderByDescending(item => {
-      const elapsedSec = new Date(nowTime - new Date(item.post.indexedAt)).getSeconds();
-      
-      let addLikeCount = 0;
-      if (elapsedSec < LATEST_BONUS_PERIOD_SEC) {
-        const rate = 1 - (LATEST_BONUS_PERIOD_SEC - elapsedSec) / LATEST_BONUS_PERIOD_SEC;
-        console.log(rate);
-        addLikeCount += rate * latestBonusLikeCount;
-      }
-      return item.post.likeCount + addLikeCount;
-    }).take(CHOICE_USER_POSTS_COUNT);
-
-    /*
-    filterdItems = filterdItems.toSorted((b, a)
-    => a.post.likeCount === b.post.likeCount ? 0 : a.post.likeCount < b.post.likeCount ? -1 : 1);
-    */
-
-    items.push(...filterdItems);
   }
-
-
 
   const feed = [];
   for (let item of items) feed.push({ post: item.post.uri });
@@ -188,6 +151,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     return jsonResponse({ feed: feed, cursor: ""}); // `{ type: "e" }` });
   }
 
+  // TODO : cursor に文字列を入れると読み込みが連続発生してしまう　正しい cursor の値を調べる
   const cursor = ""; // JSON.stringify({type: "s", viewed_dids: nextLoadArray });
   console.log(cursor);
   return jsonResponse({ feed: feed, cursor: cursor });
