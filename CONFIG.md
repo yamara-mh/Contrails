@@ -3,19 +3,21 @@
 
 > This is the feed's ID which can be letters, numbers, or dashes. Spaces are not allowed. Maximum length is 15 characters.
 
-test
+who-liked-me-b
 
 # displayName
 
 > This is the title of the custom feed. Maximum length is 24 characters.
 
-Test
+Who Liked My Post (β)
 
 # description
 
 > This is the description of the feed.
 
-test
+大まかな挙動：あなたの最近の投稿10件に最近いいねをした10ユーザを取得し、トレンドポスト3件を表示します。
+Roughly speaking: It will get the 10 users who recently liked your 10 most recent posts and show 3 trending posts.
+ユーザ認証のやり方が分かったら、通知欄からいいねしたユーザを取得する予定です。
 
 # searchTerms
 
@@ -24,8 +26,6 @@ test
 > - Keywords: Test these in [https://bsky.app/search](https://bsky.app/search). `AND` is implicit, so `cat dog` on one line will require both `cat` and `dog`. You can use quotes as well `"hot dog"`.
 > - Users: links such as `https://bsky.app/profile/why.bsky.team` will pull in the user's posts. To include replies and reposts, you can add the following flags: `https://bsky.app/profile/why.bsky.team +replies +reposts`.
 > - Pinned posts: links such as `https://bsky.app/profile/saddymayo.bsky.social/post/3jxju2wwap22e` will pin at the top of the feed. One link per line, please.
-
-- from:me
 
 # denyList
 
@@ -40,10 +40,10 @@ test
 >
 > Set to `false` if you have higher limits via a paid Cloudflare plan.
 
-true
+false
 
 # avatar
 
 > This must link to an image (PNG or JPEG) in the same directory as this CONFIG.md. It doesn't have to be called `avatar.png`, but just be sure this CONFIG.md points to the correct file.
 
-![](avatar.png)
+![](icon.png)
