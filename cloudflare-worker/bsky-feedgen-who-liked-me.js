@@ -8,7 +8,6 @@ import { loginWithEnv } from "./bsky-auth";
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 10; // 10
 const GET_LIKES_USER = 10; // 10
-const SUM_GET_USERS = 50; // 50
 const GET_USERS_ON_PAGE = 10; // 10
 const GET_USER_POSTS_LIMIT = 50;
 
@@ -112,7 +111,7 @@ export async function getFeedSkeleton(request, env, ctx) {
     }
   }
 
-  return LoadUsersPosts(accessJwt, Array.from(likedUserDidsSet).slice(0, SUM_GET_USERS));
+  return LoadUsersPosts(accessJwt, Array.from(likedUserDidsSet));
 }
 
 async function LoadUsersPosts(accessJwt, targetDids = []) {
