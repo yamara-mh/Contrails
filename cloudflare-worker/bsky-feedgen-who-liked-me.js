@@ -10,7 +10,7 @@ const GET_LIKES_MY_POSTS = 10; // 10
 const GET_LIKES_USER = 5; // 50
 const SUM_GET_USERS = 50; // 50
 const GET_USERS_ON_PAGE = 10; // 10
-const GET_USER_POSTS_LIMIT = 20;
+const GET_USER_POSTS_LIMIT = 50;
 
 const CHOICE_USER_POSTS_COUNT = 3;
 
