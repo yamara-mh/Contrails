@@ -6,13 +6,12 @@ import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv } from "./bsky-auth";
 
 const GET_LATEST_MY_POSTS = 50;
-const GET_LIKES_MY_POSTS = 5; // 10
+const GET_LIKES_MY_POSTS = 10; // 10
 const GET_LIKES_USER = 5; // 50
 const SUM_GET_USERS = 50; // 50
 const GET_USERS_ON_PAGE = 10; // 10
-const GET_USER_POSTS_LIMIT = 30;
+const GET_USER_POSTS_LIMIT = 20;
 
-const LATEST_BONUS_PERIOD_SEC = 86400 * 7;
 const CHOICE_USER_POSTS_COUNT = 3;
 
 export async function feedGeneratorWellKnown(request) {
@@ -48,6 +47,8 @@ export async function getFeedSkeleton(request, env, ctx) {
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
 
+
+
   // cursor に未閲覧ユーザがいたら表示
   const viewedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
@@ -56,7 +57,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
     return await LoadUsersPosts(accessJwt, JSON.parse(cursorParam).viewed_dids);
   }
-
+  
 
 
   // 閲覧者の通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
@@ -148,12 +149,10 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
   const nextLoadArray = targetDids.slice(GET_USERS_ON_PAGE);
   if (nextLoadArray.length === 0) {
     console.log("empty");
-    return jsonResponse({ feed: feed, cursor: ""}); // `{ type: "e" }` });
+    return jsonResponse({ feed: feed, cursor: ""});
   }
 
-  // TODO : cursor に文字列を入れると読み込みが連続発生してしまう　正しい cursor の値を調べる
-  const cursor = ""; // JSON.stringify({type: "s", viewed_dids: nextLoadArray });
-  console.log(cursor);
+  const cursor = JSON.stringify({type: "s", viewed_dids: nextLoadArray });
   return jsonResponse({ feed: feed, cursor: cursor });
 }
 
