@@ -16,8 +16,8 @@ Who Liked My Post (β)
 > This is the description of the feed.
 
 大まかな挙動：あなたの最近の投稿10件に最近いいねをした10ユーザを取得し、トレンドポスト3件を表示します。
-Roughly speaking: It will get the 10 users who recently liked your 10 most recent posts and show 3 trending posts.
 ユーザ認証のやり方が分かったら、通知欄からいいねしたユーザを取得する予定です。
+Roughly speaking: It will get the 10 users who recently liked your 10 most recent posts and show 3 trending posts.
 
 # searchTerms
 
