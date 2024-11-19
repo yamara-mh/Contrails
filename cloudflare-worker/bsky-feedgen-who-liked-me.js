@@ -3,7 +3,7 @@ import { appBskyFeedGetAuthorFeed, appBskyFeedGetLikes } from "./bsky-api";
 import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
-import { loginWithEnv, ValidateAuth } from "./bsky-auth";
+import { loginWithEnv } from "./bsky-auth";
 
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 10; // 10
@@ -43,16 +43,9 @@ export async function getFeedSkeleton(request, env, ctx) {
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
   
+  let accessJwt = null;
+  accessJwt = await loginWithEnv(env);
 
-  // let accessJwt = null;
-  // accessJwt = await loginWithEnv(env);
-  
-  console.log("test");
-
-  const auth = await ValidateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
-  const accessJwt = auth.jwt;
-  console.log(`auth.iss ${auth.iss}`);
-  console.log(`auth.jwt ${auth.jwt}`);
 
 
   // cursor に未閲覧ユーザがいたら表示
@@ -64,14 +57,18 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
   
 
+
   // 閲覧者の通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
   // サーバが閲覧者の通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
 
-
+  const myAccessJwt = request.headers.get("Authorization");
+  const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
+  const payloadStr = myAccessJwtStr.split(".")[1];
+  const payload = JSON.parse(atob(payloadStr));
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(accessJwt, auth.iss, GET_LATEST_MY_POSTS, true);
+  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_LATEST_MY_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
@@ -126,6 +123,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
     let pushCount = 0;
     const feed = likedUserPostResults[ri].value.feed;
+    if (feed == undefined) continue;
     for (let pi = 0; pi < feed.length; pi++) {
       const item = feed[pi];
       // ミュートスレッドを除外

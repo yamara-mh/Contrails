@@ -1,5 +1,4 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
-const { verifyJwt, AuthRequiredError, parseReqNsid } = require('@atproto/xrpc-server');
 
 export async function loginWithEnv(env) {
   return await login(env.BLUESKY_HANDLE, env.BLUESKY_APP_PASSWORD, env);
@@ -51,17 +50,4 @@ async function login(username, password, env) {
     }
   }
   return null;
-}
-
-async function ValidateAuth(req, serviceDid, didResolver){
-  const { authorization = '' } = req.headers;
-  if (!authorization.startsWith('Bearer ')) {
-    throw new AuthRequiredError();
-  }
-  const jwt = authorization.replace('Bearer ', '').trim();
-  const nsid = parseReqNsid(req);
-  const parsed = await verifyJwt(jwt, serviceDid, nsid, async (did) => {
-    return didResolver.resolveAtprotoKey(did);
-  });
-  return {iss: parsed.iss, jwt: jwt};
 }
