@@ -67,14 +67,15 @@ export async function getFeedSkeleton(request, env, ctx) {
   const payload = JSON.parse(atob(payloadStr));
 
   console.log(myAccessJwt);
-  console.log(myAccessJwtStr);
+  console.log(`myAccessJwtStr ${myAccessJwtStr}`);
   console.log(JSON.parse(atob(myAccessJwtStr.split(".")[0])));
   console.log(payloadStr);
-  console.log(payload);
+  console.log(`payload ${payload}`);
 
   const auth = await ValidateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
-  console.log(auth.iss);
-  console.log(auth.jwt);
+  accessJwt = auth.jwt;
+  console.log(`auth.iss ${auth.iss}`);
+  console.log(`auth.jwt ${auth.jwt}`);
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
