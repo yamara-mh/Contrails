@@ -3,7 +3,7 @@ import { appBskyFeedGetAuthorFeed, appBskyFeedGetLikes } from "./bsky-api";
 import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
-import { loginWithEnv } from "./bsky-auth";
+import { loginWithEnv, ValidateAuth } from "./bsky-auth";
 
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 10; // 10
@@ -71,6 +71,10 @@ export async function getFeedSkeleton(request, env, ctx) {
   console.log(JSON.parse(atob(myAccessJwtStr.split(".")[0])));
   console.log(payloadStr);
   console.log(payload);
+
+  const auth = await ValidateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
+  console.log(auth.iss);
+  console.log(auth.jwt);
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
