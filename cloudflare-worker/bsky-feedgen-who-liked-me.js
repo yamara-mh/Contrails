@@ -65,6 +65,12 @@ export async function getFeedSkeleton(request, env, ctx) {
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
+
+  console.log(myAccessJwt);
+  console.log(myAccessJwtStr);
+  console.log(JSON.parse(atob(myAccessJwtStr.split(".")[0])));
+  console.log(payloadStr);
+  console.log(payload);
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
