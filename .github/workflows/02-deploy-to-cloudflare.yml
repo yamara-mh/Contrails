@@ -69,7 +69,7 @@ jobs:
             BLUESKY_HANDLE
             BLUESKY_APP_PASSWORD
           command: |
-            deploy cloudflare-worker/worker.js
+            deploy cloudflare-worker/worker.ts
       - name: Cleanup wrangler.toml
         run: |
           rm -f wrangler.toml

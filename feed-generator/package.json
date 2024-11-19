@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "atproto feed generator starter kit",
-  "main": "index.js",
+  "main": "index.ts",
   "repository": "git@github.com:bluesky-social/feed-generator.git",
   "author": "dholms <dtholmgren@gmail.com>",
   "license": "MIT",
