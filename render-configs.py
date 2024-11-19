@@ -202,7 +202,7 @@ def main():
                 configs[config["recordName"]] = config
 
     save_json_configs("feed-generator/configs.json", configs)
-    replace_json_configs("cloudflare-worker/configs.ts", configs)
+    replace_json_configs("cloudflare-worker/configs.js", configs)
 
 
 main()

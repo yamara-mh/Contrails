@@ -145,11 +145,11 @@ flowchart LR
             BlueskyHandle("BLUESKY_HANDLE")
             BlueskyAppPassword("BLUESKY_APP_PASSWORD")
         end
-        MD_Config --> Worker_JS["worker.ts"]
+        MD_Config --> Worker_JS["worker.js"]
         MD_Config --> PublishFeedGenerator["publishFeedGenerator.ts"]
     end
     subgraph "Cloudflare Worker"
-        CloudflareWorker[worker.ts]
+        CloudflareWorker[worker.js]
     end
     CloudflareDeploy -->|Deploy to Cloudflare| CloudflareWorker
     BlueskyDeploy -->|Publish Feed Generator| PDS
