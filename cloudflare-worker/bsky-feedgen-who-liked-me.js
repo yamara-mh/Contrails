@@ -43,9 +43,16 @@ export async function getFeedSkeleton(request, env, ctx) {
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
   
-  let accessJwt = null;
-  accessJwt = await loginWithEnv(env);
 
+  // let accessJwt = null;
+  // accessJwt = await loginWithEnv(env);
+  
+  console.log("test");
+
+  const auth = await ValidateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
+  const accessJwt = auth.jwt;
+  console.log(`auth.iss ${auth.iss}`);
+  console.log(`auth.jwt ${auth.jwt}`);
 
 
   // cursor に未閲覧ユーザがいたら表示
@@ -57,29 +64,14 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
   
 
-
   // 閲覧者の通知を取得して、いいねしたユーザを列挙した方が簡潔な気がする
   // サーバが閲覧者の通知取得APIを呼べるのは危うい気がするけど、呼べるのか？
 
-  const myAccessJwt = request.headers.get("Authorization");
-  const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
-  const payloadStr = myAccessJwtStr.split(".")[1];
-  const payload = JSON.parse(atob(payloadStr));
 
-  console.log(myAccessJwt);
-  console.log(`myAccessJwtStr ${myAccessJwtStr}`);
-  console.log(JSON.parse(atob(myAccessJwtStr.split(".")[0])));
-  console.log(payloadStr);
-  console.log(`payload ${payload}`);
-
-  const auth = await ValidateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
-  accessJwt = auth.jwt;
-  console.log(`auth.iss ${auth.iss}`);
-  console.log(`auth.jwt ${auth.jwt}`);
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_LATEST_MY_POSTS, true);
+  let myFeedHandle = await fetchUser(accessJwt, auth.iss, GET_LATEST_MY_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
