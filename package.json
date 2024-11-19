@@ -2,5 +2,8 @@
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
     "linq": "^4.0.3"
+  },
+  "devDependencies": {
+    "ts-migrate": "^0.1.35"
   }
 }
