@@ -14,17 +14,17 @@ function getSafeMode() {
   return SAFE_MODE;
 }
 
-export async function fetchGuarded() {
+export async function fetchGuarded(url: string, init: { body: string; method: string; headers: any }) {
   if (getSafeMode() === false) {
     fetchCount++;
-    return await fetch(...arguments);
+    return await fetch(url, init);
   } else {
     fetchCount++;
     if (fetchCount > MAX_FETCHES) {
       console.log(`NOT fetching ${fetchCount}`);
       return null;
     } else {
-      return await fetch(...arguments);
+      return await fetch(url, init);
     }
   }
 }

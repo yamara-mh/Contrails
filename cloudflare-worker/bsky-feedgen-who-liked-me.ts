@@ -75,26 +75,26 @@ export async function getFeedSkeleton(request, env, ctx) {
 
   if (myFeed.length == 0) return jsonResponse({ feed: null, cursor: "" });
 
-  const filteredPosts = [];
+  const filteredPosts: any = [];
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
-    const item = myFeed[itemIdx];
+    const item = myFeed[itemIdx] as any;
 
     // リプライとリポスト、いいね0を除外
     if (item.post === undefined || item.post.record === undefined) continue;
     if (item.reply !== undefined || item.reason !== undefined) continue;
     if (item.post.likeCount == 0) continue;
-    if (filteredPosts.some(f => f.post.uri == item.post.uri)) continue;
+    if (filteredPosts.some(f => (f as any).post.uri == item.post.uri)) continue;
 
     filteredPosts.push(item);
     if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
   }
   
   // いいねしたユーザを取得
-  const likedUserResults = await Promise.allSettled(
+  const likedUserResults: any = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  const likedUserDidsSet = new Set();
+  const likedUserDidsSet: any = new Set();
   for (let ri = 0; ri < likedUserResults.length; ri++) {
     if (likedUserResults[ri].status === "rejected") continue;
     const likes = likedUserResults[ri].value.likes;
@@ -114,10 +114,10 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
   const loadDids = targetDids.slice(0, GET_USERS_ON_PAGE);
 
   // いいねした人のポストを取得
-  const likedUserPostResults = await Promise.allSettled(
+  const likedUserPostResults: any = await Promise.allSettled(
     loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, false)));
 
-  const items = [];
+  const items: any = [];
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
     if (likedUserPostResults[ri].status === "rejected") continue;
 
@@ -125,7 +125,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     const feed = likedUserPostResults[ri].value.feed;
     if (feed == undefined) continue;
     for (let pi = 0; pi < feed.length; pi++) {
-      const item = feed[pi];
+      const item = feed[pi] as any;
       // ミュートスレッドを除外
       if (item.post.viewer.threadMuted === true) continue;
       // リプライとリポストを除外
@@ -139,7 +139,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     }
   }
 
-  const feed = [];
+  const feed: any = [];
   for (let item of items) feed.push({ post: item.post.uri });
 
   const nextLoadArray = targetDids.slice(GET_USERS_ON_PAGE);
@@ -162,6 +162,6 @@ async function fetchLikes(accessJwt, uri, limit = 10, cid = null, cursor = null)
 
 function feedJsonResponse(items, cursor = null) {
   let response = { feed: items };
-  if (cursor !== null) response.cursor = cursor;
+  if (cursor !== null) (response as any).cursor = cursor;
   return jsonResponse(response);
 }
