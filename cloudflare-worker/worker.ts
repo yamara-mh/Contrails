@@ -1,4 +1,4 @@
-import { feedGeneratorWellKnown, getFeedSkeleton } from "./bsky-feedgen-who-liked-me.ts"; // "./bsky-feedgen-who-liked-me.ts";
+import { feedGeneratorWellKnown, getFeedSkeleton } from "./bsky-feedgen-who-liked-me" // "./bsky-feedgen-who-liked-me.ts";
 
 export default {
   async fetch(request, env, ctx) {
