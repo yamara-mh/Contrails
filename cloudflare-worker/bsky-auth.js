@@ -1,5 +1,5 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
-import { verifyJwt, AuthRequiredError, parseReqNsid } from '@atproto/xrpc-server';
+const { verifyJwt, AuthRequiredError, parseReqNsid } = require('@atproto/xrpc-server');
 
 export async function loginWithEnv(env) {
   return await login(env.BLUESKY_HANDLE, env.BLUESKY_APP_PASSWORD, env);
