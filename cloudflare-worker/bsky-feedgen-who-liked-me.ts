@@ -32,7 +32,10 @@ export async function feedGeneratorWellKnown(request) {
   return jsonResponse(didJson);
 }
 
-export async function getFeedSkeleton(request, env, ctx) {  
+export async function getFeedSkeleton(request, env, ctx) {
+
+  console.log("test");
+
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
   if (feedAtUrl === null) {
