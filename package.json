@@ -2,9 +2,22 @@
   "dependencies": {
     "@atproto/identity": "^0.4.3",
     "@atproto/xrpc-server": "^0.7.3",
-    "@types/express": "github:types/express",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "linq": "^4.0.3"
+    "@atproto/api": "^0.3.7",
+    "@atproto/did-resolver": "^0.1.0",
+    "@atproto/lexicon": "^0.1.0",
+    "@atproto/repo": "^0.1.0",
+    "@atproto/uri": "^0.0.2",
+    "dotenv": "^16.0.3",
+    "kysely": "^0.22.0",
+    "multiformats": "^9.9.0"
+  }
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.4",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.1.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   }
 }
