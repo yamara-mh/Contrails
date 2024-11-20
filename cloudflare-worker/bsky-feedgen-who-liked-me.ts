@@ -35,6 +35,8 @@ export async function feedGeneratorWellKnown(request) {
 export async function getFeedSkeleton(request, env, ctx) {
 
   console.log("test");
+  console.log(ctx === undefined ? "t" : "f");
+  console.log(JSON.stringify(ctx));
 
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
@@ -49,9 +51,10 @@ export async function getFeedSkeleton(request, env, ctx) {
   let accessJwt = null;
   accessJwt = await loginWithEnv(env);
 
-  const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
-  console.log(requesterDid);
-  console.log(JSON.stringify(requesterDid));
+  
+  // const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
+  // console.log(requesterDid);
+  // console.log(JSON.stringify(requesterDid));
   
 
   // cursor に未閲覧ユーザがいたら表示
