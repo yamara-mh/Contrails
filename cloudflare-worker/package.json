@@ -13,6 +13,8 @@
     "wrangler": "^3.0.0"
   },
   "dependencies": {
+    "@atproto/identity": "^0.4.3",
+    "@atproto/xrpc-server": "^0.7.3",
     "atproto": "^0.0.1",
     "types": "^0.1.1"
   }
