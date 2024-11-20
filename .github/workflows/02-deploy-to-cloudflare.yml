@@ -54,7 +54,7 @@ jobs:
           >wrangler.toml
           echo "name = \"$WORKER_NAME\"" >>wrangler.toml
           echo compatibility_date = \"2023-05-30\" >>wrangler.toml
-          echo compatibility_flags = \[ "nodejs_compat" \] >>wrangler.toml
+          echo compatibility_flags = \[ \"nodejs_compat\" \] >>wrangler.toml
           echo \[\[ d1_databases \]\] >>wrangler.toml
           echo binding = \"DB\"  >>wrangler.toml
           echo preview_database_id = \"DB\"  >>wrangler.toml
