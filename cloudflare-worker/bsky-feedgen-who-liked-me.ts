@@ -4,6 +4,7 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv, validateAuth } from "./bsky-auth";
+import { jwt } from "jsonwebtoken";
 
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 10; // 10
@@ -53,9 +54,9 @@ export async function getFeedSkeleton(request, env, ctx) {
   accessJwt = await loginWithEnv(env);
 
   
-  // const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
-  // console.log(requesterDid);
-  // console.log(JSON.stringify(requesterDid));
+  const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
+  console.log(requesterDid);
+  console.log(JSON.stringify(requesterDid));
   
 
   // cursor に未閲覧ユーザがいたら表示
@@ -75,6 +76,17 @@ export async function getFeedSkeleton(request, env, ctx) {
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
+
+  console.log(myAccessJwtStr);
+  console.log(payload);
+
+  let jsonWebToken = myAccessJwtStr.split(".")[0] + "." + payloadStr ; ".";
+  // const token = jsonWebToken.substring(payload, env.)
+
+
+  
+
+
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
