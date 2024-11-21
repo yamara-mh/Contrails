@@ -16,6 +16,7 @@
     "@atproto/identity": "^0.4.3",
     "@atproto/xrpc-server": "^0.7.3",
     "atproto": "^0.0.1",
+    "jsonwebtoken": "^9.0.2",
     "types": "^0.1.1"
   }
 }
