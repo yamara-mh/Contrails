@@ -79,10 +79,13 @@ export async function getFeedSkeleton(request, env, ctx) {
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
 
-  console.log(header);
   console.log(payload);
-
+  console.log(env.JWT_SECRET_KEY);
+  console.log(header.alg);
+  
   const token = jwt.sign(payload, env.JWT_SECRET_KEY, { algorithm: header.alg });
+  console.log(token);
+  
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
