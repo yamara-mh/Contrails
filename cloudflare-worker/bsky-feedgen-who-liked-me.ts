@@ -74,23 +74,19 @@ export async function getFeedSkeleton(request, env, ctx) {
 
   const myAccessJwt = request.headers.get("Authorization");
   const myAccessJwtStr = myAccessJwt.toString().replace("Bearer ", "");
+  const headerStr = myAccessJwtStr.split(".")[0];
+  const header = JSON.parse(atob(headerStr));
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
 
-  console.log(myAccessJwtStr);
+  console.log(header);
   console.log(payload);
 
-  let jsonWebToken = myAccessJwtStr.split(".")[0] + "." + payloadStr ; ".";
-  // const token = jsonWebToken.substring(payload, env.)
-
-
-  
-
-
+  const token = jwt.sign(payload, env.JWT_SECRET_KEY, { algorithm: header.alg });
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_LATEST_MY_POSTS, true);
+  let myFeedHandle = await fetchUser(token, payload.iss, GET_LATEST_MY_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
