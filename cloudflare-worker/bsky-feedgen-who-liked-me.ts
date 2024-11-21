@@ -35,8 +35,9 @@ export async function feedGeneratorWellKnown(request) {
 export async function getFeedSkeleton(request, env, ctx) {
 
   console.log("test");
-  console.log(ctx === undefined ? "t" : "f");
   console.log(JSON.stringify(ctx));
+  console.log(Object.values(ctx));
+  console.log(Object.keys(ctx));
 
   const url = new URL(request.url);
   const feedAtUrl = url.searchParams.get("feed");
