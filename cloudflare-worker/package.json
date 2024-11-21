@@ -17,6 +17,7 @@
     "@atproto/xrpc-server": "^0.7.3",
     "@types/node": "^22.9.1",
     "atproto": "^0.0.1",
+    "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "types": "^0.1.1"
   }
