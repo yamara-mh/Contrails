@@ -54,9 +54,9 @@ export async function getFeedSkeleton(request, env, ctx) {
   accessJwt = await loginWithEnv(env);
 
   
-  const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
-  console.log(requesterDid);
-  console.log(JSON.stringify(requesterDid));
+  // const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
+  // console.log(requesterDid);
+  // console.log(JSON.stringify(requesterDid));
   
 
   // cursor に未閲覧ユーザがいたら表示
