@@ -4,7 +4,7 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv, validateAuth } from "./bsky-auth";
-import Enumerable from 'linq';
+import { from } from "linq-to-typescript";
 
 const GET_LATEST_MY_POSTS = 50; // 閲覧者の投稿取得数
 const GET_LIKES_MY_POSTS = 10; // 取得するいいねリストの数
@@ -144,7 +144,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
 
   // 最近のいいね順に並べ替えて重複を除く
-  likedUsers = Enumerable.From(likedUsers).orderByDescending(l => l.indexedAt).toArray();
+  likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray();
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
     likedUserDids.add(likedUsers[i].actor.did);
