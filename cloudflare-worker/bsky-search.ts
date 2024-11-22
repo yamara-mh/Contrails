@@ -1,7 +1,7 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
 
 export async function searchPost(searchTerm, params,accessJwt) {
-  let urlParams = {
+  let urlParams: any = {
     q: searchTerm,
   };
   if (params.count !== undefined) {
@@ -17,7 +17,7 @@ export async function searchPost(searchTerm, params,accessJwt) {
     headers: {
       Authorization: `Bearer ${accessJwt}`,
     },
-  })
+  } as any)
 
   if (response !== null) {
     let resbody = await response.json();
