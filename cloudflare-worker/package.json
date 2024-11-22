@@ -20,7 +20,7 @@
     "atproto": "^0.0.1",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
-    "linq": "^4.0.3",
+    "linq-to-typescript": "^11.1.0",
     "types": "^0.1.1"
   }
 }
