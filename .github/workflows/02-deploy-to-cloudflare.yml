@@ -55,6 +55,8 @@ jobs:
           echo "name = \"$WORKER_NAME\"" >>wrangler.toml
           echo compatibility_date = \"2024-09-23\" >>wrangler.toml
           echo compatibility_flags = \[ \"nodejs_compat\" \] >>wrangler.toml
+          echo \[build.upload\] >>wrangler.toml
+          echo external = \[\"linq-to-typescript\"\] >>wrangler.toml
           echo \[\[ d1_databases \]\] >>wrangler.toml
           echo binding = \"DB\"  >>wrangler.toml
           echo preview_database_id = \"DB\"  >>wrangler.toml

@@ -144,6 +144,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
 
   // 最近のいいね順に並べ替えて重複を除く
+  likedUsers.sort(l => )
   likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray();
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
