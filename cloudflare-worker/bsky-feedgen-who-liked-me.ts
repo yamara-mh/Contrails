@@ -80,10 +80,9 @@ export async function getFeedSkeleton(request, env, ctx) {
   const payload = JSON.parse(atob(payloadStr));
 
   console.log(payload);
-  console.log(process.env.JWT_SECRET_KEY);
   console.log(header.alg);
   
-  const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { algorithm: header.alg });
+  const token = jwt.sign(payload, "C5D489224B814890B659620F758E281B", { algorithm: header.alg });
   console.log(token);
   
   
