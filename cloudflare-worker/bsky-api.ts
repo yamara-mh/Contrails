@@ -6,6 +6,7 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
     actor: did,
     limit: limit,
     possible_values: "posts_no_replies",
+    includePins: true,
     sort: "",
     cursor: ""
   };

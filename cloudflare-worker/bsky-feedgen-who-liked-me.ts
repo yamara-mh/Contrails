@@ -4,16 +4,17 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv, validateAuth } from "./bsky-auth";
-import { jwt } from "jsonwebtoken";
-import process = require("node:process");
+import Enumerable from 'linq';
 
-const GET_LATEST_MY_POSTS = 50;
-const GET_LIKES_MY_POSTS = 10; // 10
-const GET_LIKES_USER = 10; // 10
-const GET_USERS_ON_PAGE = 10; // 10
-const GET_USER_POSTS_LIMIT = 15;
+const GET_LATEST_MY_POSTS = 50; // 閲覧者の投稿取得数
+const GET_LIKES_MY_POSTS = 10; // 取得するいいねリストの数
+const GET_LIKES_USER = 10; // いいねリストから取得するユーザの数
 
-const CHOICE_USER_POSTS_COUNT = 3;
+const GET_USERS_ON_PAGE = 10; // 1ページに読み込む人数
+const GET_USER_POSTS_LIMIT = 20; // 表示候補数
+const CHOICE_USER_POSTS_COUNT = 3; // 一人当たりの表示ポスト数
+const GET_USER_LIMIT = 100; // 最大読込人数
+
 
 export async function feedGeneratorWellKnown(request) {
   let host = request.headers.get("Host");
@@ -60,7 +61,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   // console.log(JSON.stringify(requesterDid));
   
 
-  // cursor に未閲覧ユーザがいたら表示
+  // 2周目。cursor に未閲覧ユーザがいたら表示
   const viewedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
   
@@ -80,22 +81,21 @@ export async function getFeedSkeleton(request, env, ctx) {
   const payloadStr = myAccessJwtStr.split(".")[1];
   const payload = JSON.parse(atob(payloadStr));
 
-  console.log(payload);
-  console.log(process.env.JWT_SECRET_KEY as string);
-  console.log(header.alg);
-
-  jwt.verify(myAccessJwtStr, process.env.JWT_SECRET_KEY as string, { algorithms: ['RS256'] }, function(err:{}, decoded:{}) {
-    console.log(decoded);
-  });
-  
-  const token = jwt.sign(payload, "C5D489224B814890B659620F758E281B", { algorithm: "ES256K" }); // header.alg 
-  console.log(token);
-  
+  // console.log(payload);
+  // console.log(process.env.JWT_SECRET_KEY as string);
+  // console.log(header.alg);
+// 
+  // jwt.verify(myAccessJwtStr, process.env.JWT_SECRET_KEY as string, { algorithms: ['RS256'] }, function(err:{}, decoded:{}) {
+  //   console.log(decoded);
+  // });
+  // 
+  // const token = jwt.sign(payload, "C5D489224B814890B659620F758E281B", { algorithm: "ES256K" }); // header.alg 
+  // console.log(token);
   
   
   // 閲覧者の最新ポストを取得
   let myFeed = [];
-  let myFeedHandle = await fetchUser(token, payload.iss, GET_LATEST_MY_POSTS, true);
+  let myFeedHandle = await fetchUser(accessJwt, payload.iss, GET_LATEST_MY_POSTS, true);
   if (Array.isArray(myFeedHandle.feed)) {
     myFeed = myFeedHandle.feed;
   }
@@ -106,6 +106,16 @@ export async function getFeedSkeleton(request, env, ctx) {
   let filteredFeedCount = 0;
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx] as any;
+
+    console.log(`${itemIdx} ${item.post.viewer.pinned}`);
+
+    // ピン止めしているポストは確実に取得
+    if (item.post.viewer.pinned) {
+      filteredPosts.push(item);
+      if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
+    }
+
+    // いいね割合の多いポストを優先的に選ぶ？
 
     // リプライとリポスト、いいね0を除外
     if (item.post === undefined || item.post.record === undefined) continue;
@@ -121,20 +131,27 @@ export async function getFeedSkeleton(request, env, ctx) {
   const likedUserResults: any = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  const likedUserDidsSet: any = new Set();
-  for (let ri = 0; ri < likedUserResults.length; ri++) {
-    if (likedUserResults[ri].status === "rejected") continue;
-    const likes = likedUserResults[ri].value.likes;
+  let likedUsers: any = [];
+  for (let i = 0; i < likedUserResults.length; i++) {
+    if (likedUserResults[i].status === "rejected") continue;
+    const likes = likedUserResults[i].value.likes;
     for (let li = 0; li < likes.length; li++) {
-      // 閲覧済みのユーザを除外
-      if (viewedDids.has(likes[li].actor.did)) continue;
-      // ミュートを除外
-      if (likes[li].actor.viewer.muted === true) continue;
-      likedUserDidsSet.add(likes[li].actor.did);
+      // TODO ミュートを除外　APIを呼ぶユーザの情報が利用されてしまう
+      // if (likes[li].actor.viewer.muted === true) continue;
+
+      likedUsers.push(...likes[li]);
     }
   }
 
-  return LoadUsersPosts(accessJwt, Array.from(likedUserDidsSet));
+  // 最近のいいね順に並べ替えて重複を除く
+  likedUsers = Enumerable.From(likedUsers).orderByDescending(l => l.indexedAt).toArray();
+  const likedUserDids: any = new Set();
+  for (let i = 0; i < likedUsers.length; i++) {
+    likedUserDids.add(likedUsers[i].actor.did);
+    if (likedUserDids.count == GET_USER_LIMIT) break;
+  }
+
+  return LoadUsersPosts(accessJwt, Array.from(likedUserDids));
 }
 
 async function LoadUsersPosts(accessJwt, targetDids = []) {
@@ -142,7 +159,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
   // いいねした人のポストを取得
   const likedUserPostResults: any = await Promise.allSettled(
-    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, false)));
+    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, false, null)));
 
   const items: any = [];
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
@@ -153,13 +170,13 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     if (feed == undefined) continue;
     for (let pi = 0; pi < feed.length; pi++) {
       const item = feed[pi] as any;
-      // ミュートスレッドを除外
-      if (item.post.viewer.threadMuted === true) continue;
+      // TODO ミュートスレッドを除外　APIを呼ぶユーザの情報が利用されてしまう
+      // if (item.post.viewer.threadMuted === true) continue;
       // リプライとリポストを除外
       if (item.post === undefined || item.post.record === undefined) continue;
       if (item.reply !== undefined || item.reason !== undefined) continue;
-      // 既にいいねした投稿を除外
-      if (item.post.viewer.like !== undefined) continue;
+      // 既にいいねした投稿を除外　APIを呼ぶユーザの情報が利用されてしまう
+      // if (item.post.viewer.like !== undefined) continue;
       
       items.push(item);
       if (++pushCount == CHOICE_USER_POSTS_COUNT) break;
