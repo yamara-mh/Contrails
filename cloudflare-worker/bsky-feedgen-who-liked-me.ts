@@ -5,6 +5,7 @@ import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv, validateAuth } from "./bsky-auth";
 import { jwt } from "jsonwebtoken";
+import process = require("node:process");
 
 const GET_LATEST_MY_POSTS = 50;
 const GET_LIKES_MY_POSTS = 10; // 10
@@ -80,11 +81,16 @@ export async function getFeedSkeleton(request, env, ctx) {
   const payload = JSON.parse(atob(payloadStr));
 
   console.log(payload);
-  console.log(process.env.JWT_SECRET_KEY);
+  console.log(process.env.JWT_SECRET_KEY as string);
   console.log(header.alg);
+
+  jwt.verify(myAccessJwtStr, process.env.JWT_SECRET_KEY as string, { algorithms: ['RS256'] }, function(err:{}, decoded:{}) {
+    console.log(decoded);
+  });
   
-  const token = jwt.sign(payload, "C5D489224B814890B659620F758E281B", { algorithm: header.alg });
+  const token = jwt.sign(payload, "C5D489224B814890B659620F758E281B", { algorithm: "ES256K" }); // header.alg 
   console.log(token);
+  
   
   
   // 閲覧者の最新ポストを取得
