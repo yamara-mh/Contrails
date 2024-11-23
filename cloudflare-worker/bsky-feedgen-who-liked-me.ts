@@ -173,7 +173,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
     const choicedItems = [];
     const sliceLength = Math.ceil(validFeed.length / CHOICE_USER_POSTS_COUNT);
-    for (let i = 0; i < Math.max(validFeed.length, CHOICE_USER_POSTS_COUNT); i++) {
+    for (let i = 0; i < Math.min(validFeed.length, CHOICE_USER_POSTS_COUNT); i++) {
       const one = validFeed.slice(0, sliceLength * (i + 1)).reduce((a, c) => {
         if (a == null) return c;
         if (choicedItems.length > 0 && choicedItems.some(i => i.post.cid === c.post.cid)) return a;
