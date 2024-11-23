@@ -4,11 +4,11 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv, validateAuth } from "./bsky-auth";
-import { from } from "linq-to-typescript";
+// import { from } from "linq-to-typescript";
 
 const GET_LATEST_MY_POSTS = 50; // 閲覧者の投稿取得数
 const GET_LIKES_MY_POSTS = 10; // 取得するいいねリストの数
-const GET_LIKES_USER = 10; // いいねリストから取得するユーザの数
+const GET_LIKES_USER = 30; // いいねリストから取得するユーザの数
 
 const GET_USERS_ON_PAGE = 10; // 1ページに読み込む人数
 const GET_USER_POSTS_LIMIT = 20; // 表示候補数
@@ -143,8 +143,11 @@ export async function getFeedSkeleton(request, env, ctx) {
     }
   }
 
+  console.log(likedUsers[0].indexedAt);
+
   // 最近のいいね順に並べ替えて重複を除く
-  likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray();
+  // likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray();
+  likedUsers = likedUsers.sort((a, b) => a.indexedAt == b.indexedAt ? 0 : a.indexedAt > b.indexedAt ? -1 : 1);
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
     likedUserDids.add(likedUsers[i].actor.did);
