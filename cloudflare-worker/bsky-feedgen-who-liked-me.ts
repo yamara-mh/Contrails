@@ -138,8 +138,6 @@ export async function getFeedSkeleton(request, env, ctx) {
     // }
   }
 
-  console.log(likedUsers[0].indexedAt);
-
   // 最近のいいね順に並べ替えて重複を除く
   // likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray();
   likedUsers = likedUsers.sort((a, b) => a.indexedAt == b.indexedAt ? 0 : a.indexedAt > b.indexedAt ? -1 : 1);
@@ -166,11 +164,13 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     if (feed == undefined) continue;
 
     // 最新10、20件、30件でいいねが多い投稿を表示
-    var validFeed = feed.filter(f => CheckVaildPost(f));    
-    var sliceRange = Math.ceil(validFeed.length / CHOICE_USER_POSTS_COUNT);
+    var validFeed = feed.filter(f => CheckVaildPost(f));
+    console.log(validFeed.length);
+    var sliceLength = Math.ceil(validFeed.length / CHOICE_USER_POSTS_COUNT);
     for (let i = 0; i < Math.max(validFeed.length, CHOICE_USER_POSTS_COUNT); i++) {
-      var one = validFeed.slice(0, sliceRange * (i + 1)).reduce((a, c) => {
+      var one = validFeed.slice(0, sliceLength * (i + 1)).reduce((a, c) => {
         if (a == null) return c;
+        console.log(items.length);
         if (items.length > 0 && items.some(i => i.post.cid === c.post.cid)) return a;
         return c.post.likeCount > a.post.likeCount ? c : a;
       }, null);
