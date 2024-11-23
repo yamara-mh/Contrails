@@ -10,9 +10,10 @@ who-liked-me-b
 # displayName
 
 > This is the title of the custom feed. Maximum length is 24 characters.
-> Who Liked My Post (β)
 
-Test
+Who Liked My Post (β)
+
+> Test
 
 # description
 
