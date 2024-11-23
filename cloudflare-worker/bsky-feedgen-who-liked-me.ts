@@ -170,7 +170,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     for (let i = 0; i < Math.max(posts.length, CHOICE_USER_POSTS_COUNT); i++) {
       var one = posts.slice(0, sliceRange * (i + 1)).reduce((a, c) => {
         if (a == null) return c;
-        if (items.length > 0 && items.contains(c)) return a;
+        if (items.length > 0 && items.contains(i => i === c)) return a;
         return c.post.likeCount > a.post.likeCount ? c : a;
       }, null);
       items.push(one);
