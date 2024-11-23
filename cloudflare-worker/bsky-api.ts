@@ -1,12 +1,12 @@
 import { fetchGuarded } from "./bsky-fetch-guarded";
 
-export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLatest = false, cursor = null) {
+export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLatest = false, cursor = null, includePins = true) {
   if (accessJwt === null) return null;
   let params = {
     actor: did,
     limit: limit,
     possible_values: "posts_no_replies",
-    includePins: true,
+    includePins: includePins,
     sort: "",
     cursor: ""
   };

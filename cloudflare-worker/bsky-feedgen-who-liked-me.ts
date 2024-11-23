@@ -7,11 +7,11 @@ import { loginWithEnv, validateAuth } from "./bsky-auth";
 // import { from } from "linq-to-typescript";
 
 const GET_LATEST_MY_POSTS = 50; // 閲覧者の投稿取得数
-const GET_LIKES_MY_POSTS = 10; // 取得するいいねリストの数
+const GET_LIKES_MY_POSTS = 15; // 取得するいいねリストの数
 const GET_LIKES_USER = 30; // いいねリストから取得するユーザの数
 
 const GET_USERS_ON_PAGE = 10; // 1ページに読み込む人数
-const GET_USER_POSTS_LIMIT = 20; // 表示候補数
+const GET_USER_POSTS_LIMIT = 30; // 表示候補数
 const CHOICE_USER_POSTS_COUNT = 3; // 一人当たりの表示ポスト数
 const GET_USER_LIMIT = 100; // 最大読込人数
 
@@ -107,12 +107,11 @@ export async function getFeedSkeleton(request, env, ctx) {
   for (let itemIdx = 0; itemIdx < myFeed.length; itemIdx++) {
     const item = myFeed[itemIdx] as any;
 
-    console.log(`${itemIdx} ${item.post.viewer.pinned}`);
-
     // ピン止めしているポストは確実に取得
     if (item.post.viewer.pinned) {
       filteredPosts.push(item);
-      if (++filteredFeedCount >= GET_LIKES_MY_POSTS) break;
+      filteredFeedCount++;
+      continue;
     }
 
     // いいね割合の多いポストを優先的に選ぶ？
@@ -135,12 +134,13 @@ export async function getFeedSkeleton(request, env, ctx) {
   for (let i = 0; i < likedUserResults.length; i++) {
     if (likedUserResults[i].status === "rejected") continue;
     const likes = likedUserResults[i].value.likes;
-    for (let li = 0; li < likes.length; li++) {
+    likedUsers.push(...likes);
+
+    // for (let li = 0; li < likes.length; li++) {
       // TODO ミュートを除外　APIを呼ぶユーザの情報が利用されてしまう
       // if (likes[li].actor.viewer.muted === true) continue;
-
-      likedUsers.push(...likes[li]);
-    }
+      // likedUsers.push(likes[li]);
+    // }
   }
 
   console.log(likedUsers[0].indexedAt);
@@ -160,30 +160,36 @@ export async function getFeedSkeleton(request, env, ctx) {
 async function LoadUsersPosts(accessJwt, targetDids = []) {
   const loadDids = targetDids.slice(0, GET_USERS_ON_PAGE);
 
-  // いいねした人のポストを取得
+  // いいねした人の最新ポストを取得
   const likedUserPostResults: any = await Promise.allSettled(
-    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, false, null)));
+    loadDids.map(item => fetchUser(accessJwt, item, GET_USER_POSTS_LIMIT, true, null, false)));
 
   const items: any = [];
   for (let ri = 0; ri < likedUserPostResults.length; ri++) {
     if (likedUserPostResults[ri].status === "rejected") continue;
-
-    let pushCount = 0;
     const feed = likedUserPostResults[ri].value.feed;
     if (feed == undefined) continue;
-    for (let pi = 0; pi < feed.length; pi++) {
-      const item = feed[pi] as any;
-      // TODO ミュートスレッドを除外　APIを呼ぶユーザの情報が利用されてしまう
-      // if (item.post.viewer.threadMuted === true) continue;
-      // リプライとリポストを除外
-      if (item.post === undefined || item.post.record === undefined) continue;
-      if (item.reply !== undefined || item.reason !== undefined) continue;
-      // 既にいいねした投稿を除外　APIを呼ぶユーザの情報が利用されてしまう
-      // if (item.post.viewer.like !== undefined) continue;
-      
-      items.push(item);
-      if (++pushCount == CHOICE_USER_POSTS_COUNT) break;
+
+    // 最新10、20件、30件でいいねが多い投稿を表示
+    var posts = feed.filter(f => CheckVaildPost(f));
+    var sliceRange = Math.ceil(posts.length / CHOICE_USER_POSTS_COUNT);
+    for (let i = 0; i < Math.max(posts.length, CHOICE_USER_POSTS_COUNT); i++) {
+      var one = posts.slice(0, sliceRange * (i + 1)).reduce((a, c) => {
+        if (a == null) return c;
+        if (items.contains(c)) return a;
+        return c.post.likeCount > a.post.likeCount ? c : a;
+      }, null);
+      items.push(one);
     }
+
+    // let pushCount = 0;
+    // for (let pi = 0; pi < feed.length; pi++) {
+    //   const item = feed[pi] as any;
+    //   if (CheckVaildPost(item)) {
+    //     items.push(item);
+    //     if (++pushCount == CHOICE_USER_POSTS_COUNT) break;
+    //   }
+    // }
   }
 
   const feed: any = [];
@@ -194,10 +200,20 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
 
   return jsonResponse({ feed: feed, cursor: JSON.stringify({ viewed_dids: nextLoadArray }) });
 }
+      
+function CheckVaildPost(item: any) {
+      // TODO ミュートスレッドを除外　APIを呼ぶユーザの情報が利用されてしまう
+      // if (item.post.viewer.threadMuted === true) continue;
+      // リプライとリポストを除外
+      if (item.post === undefined || item.post.record === undefined) return false;
+      if (item.reply !== undefined || item.reason !== undefined) return false;
+      // 既にいいねした投稿を除外　APIを呼ぶユーザの情報が利用されてしまう
+      // if (item.post.viewer.like !== undefined) continue;
+      return true;
+}
 
-
-async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null) {
-  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor);
+async function fetchUser(accessJwt, user, limit = 30, isLatest = false, cursor = null, includePins = true) {
+  let response = await appBskyFeedGetAuthorFeed(accessJwt, user, limit, isLatest, cursor, includePins);
   if (response !== null) return await response.json();
   return null;
 }
