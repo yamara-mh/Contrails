@@ -166,14 +166,12 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     if (feed == undefined) continue;
 
     // 最新10、20件、30件でいいねが多い投稿を表示
-    var validFeed = feed.filter(f => CheckVaildPost(f));
-    console.log(validFeed[0].post);
-    
+    var validFeed = feed.filter(f => CheckVaildPost(f));    
     var sliceRange = Math.ceil(validFeed.length / CHOICE_USER_POSTS_COUNT);
     for (let i = 0; i < Math.max(validFeed.length, CHOICE_USER_POSTS_COUNT); i++) {
       var one = validFeed.slice(0, sliceRange * (i + 1)).reduce((a, c) => {
         if (a == null) return c;
-        if (items.length > 0 && items.some(i => i.post.url === c.post.url)) return a;
+        if (items.length > 0 && items.some(i => i.post.cid === c.post.cid)) return a;
         return c.post.likeCount > a.post.likeCount ? c : a;
       }, null);
       items.push(one);
