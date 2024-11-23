@@ -4,6 +4,7 @@ import { jsonResponse } from "./utils";
 import { searchPost } from "./bsky-search";
 import { resetFetchCount, setSafeMode } from "./bsky-fetch-guarded";
 import { loginWithEnv, validateAuth } from "./bsky-auth";
+import { log } from "console";
 // import { from } from "linq-to-typescript";
 
 const GET_LATEST_MY_POSTS = 50; // 閲覧者の投稿取得数
@@ -165,12 +166,14 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     if (feed == undefined) continue;
 
     // 最新10、20件、30件でいいねが多い投稿を表示
-    var posts = feed.filter(f => CheckVaildPost(f));
-    var sliceRange = Math.ceil(posts.length / CHOICE_USER_POSTS_COUNT);
-    for (let i = 0; i < Math.max(posts.length, CHOICE_USER_POSTS_COUNT); i++) {
-      var one = posts.slice(0, sliceRange * (i + 1)).reduce((a, c) => {
+    var validFeed = feed.filter(f => CheckVaildPost(f));
+    console.log(validFeed[0].post);
+    
+    var sliceRange = Math.ceil(validFeed.length / CHOICE_USER_POSTS_COUNT);
+    for (let i = 0; i < Math.max(validFeed.length, CHOICE_USER_POSTS_COUNT); i++) {
+      var one = validFeed.slice(0, sliceRange * (i + 1)).reduce((a, c) => {
         if (a == null) return c;
-        if (items.length > 0 && items.contains(i => i === c)) return a;
+        if (items.length > 0 && items.some(i => i.post.url === c.post.url)) return a;
         return c.post.likeCount > a.post.likeCount ? c : a;
       }, null);
       items.push(one);
