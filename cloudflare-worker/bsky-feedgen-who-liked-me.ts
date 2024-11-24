@@ -163,14 +163,14 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     const feed = likedUserPostResults[ri].value.feed;
     if (feed == undefined) continue;
 
-    // 最新10、20件、30件でいいねが多い投稿を表示
     const validFeed = feed.filter(f => CheckVaildPost(f));
-
+    
     if (validFeed.length <= CHOICE_USER_POSTS_COUNT){
       items.push(...validFeed);
       continue;
     }
 
+    // 最新10、20件、30件でいいねが多い投稿を表示
     const choicedItems = [];
     const sliceLength = Math.ceil(validFeed.length / CHOICE_USER_POSTS_COUNT);
     for (let i = 0; i < Math.min(validFeed.length, CHOICE_USER_POSTS_COUNT); i++) {
@@ -182,15 +182,6 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
       if (one != null) choicedItems.push(one);
     }
     items.push(...choicedItems);
-
-    // let pushCount = 0;
-    // for (let pi = 0; pi < feed.length; pi++) {
-    //   const item = feed[pi] as any;
-    //   if (CheckVaildPost(item)) {
-    //     items.push(item);
-    //     if (++pushCount == CHOICE_USER_POSTS_COUNT) break;
-    //   }
-    // }
   }
 
   const feed: any = [];
