@@ -128,6 +128,8 @@ export async function getFeedSkeleton(request, env, ctx) {
     for (let li = 0; li < likes.length; li++){
       likes[li].createdMS = new Date(likes[li].createdAt).getUTCMilliseconds;
       likedUsers.push(likes[li]);
+      console.log(`${likes[li].actor.displayName} ${likes[li].createdAt}`);
+      
     }
 
     // for (let li = 0; li < likes.length; li++) {
