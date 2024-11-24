@@ -125,7 +125,10 @@ export async function getFeedSkeleton(request, env, ctx) {
   for (let i = 0; i < likedUserResults.length; i++) {
     if (likedUserResults[i].status === "rejected") continue;
     const likes = likedUserResults[i].value.likes;
-    likedUsers.push(...likes);
+    for (let li = 0; li < likes.length; li++){
+      likes[li].createdMS = new Date(likes[li].createdAt).getUTCMilliseconds;
+      likedUsers.push(likes[li]);
+    }
 
     // for (let li = 0; li < likes.length; li++) {
       // TODO ミュートを除外　APIを呼ぶユーザの情報が利用されてしまう
@@ -136,7 +139,7 @@ export async function getFeedSkeleton(request, env, ctx) {
 
   // 最近のいいね順に並べ替えて重複を除く
   // likedUsers = from(likedUsers).orderByDescending(l => l.createdAt).toArray(); linq のインポート方法が分からない
-  likedUsers.sort((a, b) => a.createdAt === b.createdAt ? 0 : a.createdAt > b.createdAt ? -1 : 1);
+  likedUsers.sort((a, b) => a.createdMS === b.createdMS ? 0 : a.createdMS > b.createdMS ? -1 : 1);
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
     likedUserDids.add(likedUsers[i].actor.did);
