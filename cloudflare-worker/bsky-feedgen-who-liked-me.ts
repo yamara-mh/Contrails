@@ -135,8 +135,8 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
 
   // 最近のいいね順に並べ替えて重複を除く
-  // likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray(); linq のインポート方法が分からない
-  likedUsers = likedUsers.sort((a, b) => a.indexedAt == b.indexedAt ? 0 : a.indexedAt > b.indexedAt ? -1 : 1);
+  // likedUsers = from(likedUsers).orderByDescending(l => l.createdAt).toArray(); linq のインポート方法が分からない
+  likedUsers = likedUsers.sort((a, b) => a.createdAt == b.createdAt ? 0 : a.createdAt > b.createdAt ? -1 : 1);
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
     likedUserDids.add(likedUsers[i].actor.did);
