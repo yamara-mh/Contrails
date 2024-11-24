@@ -121,7 +121,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   const likedUserResults: any = await Promise.allSettled(
     filteredPosts.map(item => fetchLikes(accessJwt, item.post.uri, GET_LIKES_USER)));
 
-  let likedUsers: any = [];
+  const likedUsers: any = [];
   for (let i = 0; i < likedUserResults.length; i++) {
     if (likedUserResults[i].status === "rejected") continue;
     const likes = likedUserResults[i].value.likes;
@@ -136,7 +136,7 @@ export async function getFeedSkeleton(request, env, ctx) {
 
   // 最近のいいね順に並べ替えて重複を除く
   // likedUsers = from(likedUsers).orderByDescending(l => l.createdAt).toArray(); linq のインポート方法が分からない
-  likedUsers = likedUsers.sort((a, b) => a.createdAt === b.createdAt ? 0 : a.createdAt > b.createdAt ? -1 : 1);
+  likedUsers.sort((a, b) => a.createdAt === b.createdAt ? 0 : a.createdAt > b.createdAt ? -1 : 1);
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
     likedUserDids.add(likedUsers[i].actor.did);
