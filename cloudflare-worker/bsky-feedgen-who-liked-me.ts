@@ -47,9 +47,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   resetFetchCount(); // for long-lived processes (local)
   setSafeMode(true);
   
-  let accessJwt = null;
-  accessJwt = await loginWithEnv(env);
-
+  let accessJwt = await loginWithEnv(env);
   
   // const requesterDid = await validateAuth(request, ctx.cfg.serviceDid, ctx.didResolver);
   // console.log(requesterDid);
@@ -57,9 +55,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   
 
   // 2周目。cursor に未閲覧ユーザがいたら表示
-  const viewedDids = new Set();
   let cursorParam = url.searchParams.get("cursor");
-  
   if (cursorParam !== undefined && cursorParam !== null && cursorParam.trim().length > 0) {
     return await LoadUsersPosts(accessJwt, JSON.parse(cursorParam).viewed_dids);
   }
@@ -139,7 +135,7 @@ export async function getFeedSkeleton(request, env, ctx) {
   }
 
   // 最近のいいね順に並べ替えて重複を除く
-  // likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray();
+  // likedUsers = from(likedUsers).orderByDescending(l => l.indexedAt).toArray(); linq のインポート方法が分からない
   likedUsers = likedUsers.sort((a, b) => a.indexedAt == b.indexedAt ? 0 : a.indexedAt > b.indexedAt ? -1 : 1);
   const likedUserDids: any = new Set();
   for (let i = 0; i < likedUsers.length; i++) {
@@ -164,7 +160,7 @@ async function LoadUsersPosts(accessJwt, targetDids = []) {
     if (feed == undefined) continue;
 
     const validFeed = feed.filter(f => CheckVaildPost(f));
-    
+
     if (validFeed.length <= CHOICE_USER_POSTS_COUNT){
       items.push(...validFeed);
       continue;
