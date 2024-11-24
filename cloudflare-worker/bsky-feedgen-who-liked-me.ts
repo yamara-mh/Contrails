@@ -142,8 +142,6 @@ export async function getFeedSkeleton(request, env, ctx) {
     likedUserDids.add(likedUsers[i].actor.did);
     if (likedUserDids.count == GET_USER_LIMIT) break;
   }
-
-  console.log(likedUsers[0].actor.displayName);
   
   return LoadUsersPosts(accessJwt, Array.from(likedUserDids));
 }

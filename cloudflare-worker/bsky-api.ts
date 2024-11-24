@@ -5,7 +5,7 @@ export async function appBskyFeedGetAuthorFeed(accessJwt, did, limit = 30, isLat
   let params = {
     actor: did,
     limit: limit,
-    possible_values: "posts_no_replies",
+    possible_values: "posts_and_author_threads", // "posts_no_replies",
     includePins: includePins,
     sort: "",
     cursor: ""
