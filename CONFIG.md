@@ -3,27 +3,27 @@
 
 > This is the feed's ID which can be letters, numbers, or dashes. Spaces are not allowed. Maximum length is 15 characters.
 
-who-liked-me-b
+> who-liked-me-b
 
-> test
+test
 
 # displayName
 
 > This is the title of the custom feed. Maximum length is 24 characters.
 
-Who Liked My Post (β)
+> Who Liked My Post (β)
 
-> Test
+Test
 
 # description
 
 > This is the description of the feed.
 
-大まかな挙動：あなたの最近の投稿10件に最近いいねをしたユーザを10人ずつ取得し、各ユーザのトレンドポストを3件ずつ表示します。
+> 大まかな挙動：あなたの最近の投稿10件に最近いいねをしたユーザを10人ずつ取得し、各ユーザのトレンドポストを3件ずつ表示します。
+> ユーザ認証のやり方が分かったら通知欄からいいねしたユーザを取得する予定です。
+> Roughly speaking: Get 10 users who liked your latest 10 posts for each post. Display 3 trending posts from up to 100 users.
 
-ユーザ認証のやり方が分かったら通知欄からいいねしたユーザを取得する予定です。
-
-Roughly speaking: Get 10 users who liked your latest 10 posts for each post. Display 3 trending posts from up to 100 users.
+Test
 
 # searchTerms
 
